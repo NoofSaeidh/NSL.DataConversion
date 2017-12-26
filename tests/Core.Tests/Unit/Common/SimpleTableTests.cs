@@ -1,6 +1,7 @@
 ﻿// This file is licensed under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using NSL.DataConversion.Core.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,15 +9,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace NSL.DataConversion.Core.Tests.Unit
+namespace NSL.DataConversion.Core.Tests.Unit.Common
 {
-    public class TableTests
+    public class SimpleTableTests
     {
         [Fact]
         public void Indexer_GetWorks()
         {
             // Arrange
-            var table = InitializeTable(2, 2, "a", true, 5, typeof(Table));
+            var table = InitializeTable(2, 2, "a", true, 5, typeof(SimpleTable));
             // Act
             var v1 = table[0, 0].Value;
             var v2 = table[0, 1].Value;
@@ -28,14 +29,14 @@ namespace NSL.DataConversion.Core.Tests.Unit
             Assert.Equal(true, v2);
 #pragma warning restore xUnit2004 // Do not use equality check to test for boolean conditions
             Assert.Equal(5, v3);
-            Assert.Equal(typeof(Table), v4);
+            Assert.Equal(typeof(SimpleTable), v4);
         }
 
         [Fact]
         public void Indexer_SetWorks()
         {
             // Arrange
-            var table = new Table(new Cell[2, 2]);
+            var table = new SimpleTable(new Cell[2, 2]);
             // Act
             table[1, 0] = new Cell("string");
             table[0, 1] = new Cell(typeof(Cell));
@@ -87,7 +88,7 @@ namespace NSL.DataConversion.Core.Tests.Unit
             Assert.Equal(typeof(Cell), table[0, 1].Value);
         }
 
-        private Table InitializeTable(int dim1, int dim2, params object[] values)
+        private SimpleTable InitializeTable(int dim1, int dim2, params object[] values)
         {
             var cells = new Cell[dim1, dim2];
             for (int i = 0, k = 0; i < dim1; i++)
@@ -97,7 +98,7 @@ namespace NSL.DataConversion.Core.Tests.Unit
                     cells[i, j] = new Cell(values[k]);
                 }
             }
-            return new Table(cells);
+            return new SimpleTable(cells);
         }
     }
 }

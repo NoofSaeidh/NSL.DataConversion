@@ -8,16 +8,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NSL.DataConversion.Core
+namespace NSL.DataConversion.Core.Common
 {
-    public class Data : ICollection<Table>
+    public class Data : ICollection<ITable>
     {
-        #region ICollection<Table> implementation
+        #region ICollection<ITable> implementation
 
         public int Count { get; }
         public bool IsReadOnly { get; }
 
-        public void Add(Table item)
+        public void Add(ITable item)
         {
             throw new NotImplementedException();
         }
@@ -27,22 +27,22 @@ namespace NSL.DataConversion.Core
             throw new NotImplementedException();
         }
 
-        public bool Contains(Table item)
+        public bool Contains(ITable item)
         {
             throw new NotImplementedException();
         }
 
-        public void CopyTo(Table[] array, int arrayIndex)
+        public void CopyTo(ITable[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerator<Table> GetEnumerator()
+        public IEnumerator<ITable> GetEnumerator()
         {
             throw new NotImplementedException();
         }
 
-        public bool Remove(Table item)
+        public bool Remove(ITable item)
         {
             throw new NotImplementedException();
         }

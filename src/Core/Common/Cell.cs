@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NSL.DataConversion.Core
+namespace NSL.DataConversion.Core.Common
 {
     public class Cell : ICell, ICell<object>, IEquatable<Cell>
     {

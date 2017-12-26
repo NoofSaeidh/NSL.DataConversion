@@ -8,13 +8,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NSL.DataConversion.Core
+namespace NSL.DataConversion.Core.Common
 {
-    public class Table : ITable, IReadOnlyTable, IGenericCellsTable
+    public class SimpleTable : ITable, IReadOnlyTable, IGenericCellsTable
     {
         private readonly ICell[,] _items;
 
-        public Table(ICell[,] items)
+        public SimpleTable(ICell[,] items)
         {
             _items = items ?? throw new ArgumentNullException(nameof(items));
         }
