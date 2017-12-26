@@ -10,48 +10,64 @@ using System.Threading.Tasks;
 
 namespace NSL.DataConversion.Core.Common
 {
-    public class Data : ICollection<ITable>
+    public class Data : IData, IDataList
     {
-        #region ICollection<ITable> implementation
+        private readonly Dictionary<string, ITable> _items;
 
-        public int Count { get; }
-        public bool IsReadOnly { get; }
-
-        public void Add(ITable item)
+        public Data()
         {
-            throw new NotImplementedException();
+            _items = new Dictionary<string, ITable>();
         }
 
-        public void Clear()
+        public Data(Dictionary<string, ITable> items)
         {
-            throw new NotImplementedException();
+            _items = items ?? throw new ArgumentNullException(nameof(items));
         }
 
-        public bool Contains(ITable item)
+        public ITable this[int index]
         {
-            throw new NotImplementedException();
+            get => _items.ElementAt(index).Value;
+            set => _items[_items.ElementAt(index).Key] = value;
         }
 
-        public void CopyTo(ITable[] array, int arrayIndex)
+        public ITable this[string key]
         {
-            throw new NotImplementedException();
+            get => _items[key];
+            set => _items[key] = value;
+        }
+
+        public int Count => _items.Count;
+
+        public void Add(string key, ITable table)
+        {
+            _items.Add(key, table);
+        }
+
+        public bool ContainsKey(string key)
+        {
+            return _items.ContainsKey(key);
+        }
+
+        public bool Remove(string key)
+        {
+            return _items.Remove(key);
+        }
+
+        public void RemoveAt(int index)
+        {
+            _items.Remove(_items.ElementAt(index).Key);
+        }
+
+        public bool TryGetValue(string key, out ITable table)
+        {
+            return _items.TryGetValue(key, out table);
         }
 
         public IEnumerator<ITable> GetEnumerator()
         {
-            throw new NotImplementedException();
+            return _items.Values.GetEnumerator();
         }
 
-        public bool Remove(ITable item)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

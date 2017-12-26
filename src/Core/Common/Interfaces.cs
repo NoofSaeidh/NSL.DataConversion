@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace NSL.DataConversion.Core.Common
 {
+    #region ICell
+
     public interface ICell
     {
         object Value { get; }
@@ -18,6 +20,10 @@ namespace NSL.DataConversion.Core.Common
     {
         new T Value { get; }
     }
+
+    #endregion
+
+    #region ITable
 
     public interface ITable : IEnumerable<ICell>
     {
@@ -55,4 +61,33 @@ namespace NSL.DataConversion.Core.Common
 
         void RemoveRow(int index);
     }
+
+    #endregion
+
+    #region IData
+
+    public interface IData : IEnumerable<ITable>
+    {
+        ITable this[int index] { get; }
+        ITable this[string index] { get; }
+        int Count { get; }
+    }
+
+    public interface IDataList : IData
+    {
+        new ITable this[int index] { get; set; }
+        new ITable this[string key] { get; set; }
+
+        void Add(string key, ITable table);
+
+        bool Remove(string key);
+
+        void RemoveAt(int index);
+
+        bool ContainsKey(string key);
+
+        bool TryGetValue(string key, out ITable table);
+    }
+
+    #endregion
 }
