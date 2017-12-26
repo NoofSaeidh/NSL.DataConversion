@@ -37,7 +37,9 @@ namespace NSL.DataConversion.Core
 
         ICell<T> IGenericCellsTable.GetCell<T>(int i, int j)
         {
-            return this[i, j] as ICell<T>;
+            if (this[i, j]?.Value is T t)
+                return new Cell<T>(t);
+            return null;
         }
     }
 }

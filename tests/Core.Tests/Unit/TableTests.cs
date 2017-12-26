@@ -13,7 +13,7 @@ namespace NSL.DataConversion.Core.Tests.Unit
     public class TableTests
     {
         [Fact]
-        public void Indexer_Work()
+        public void Indexer_GetWorks()
         {
             // Arrange
             var table = InitializeTable(2, 2, "a", true, 5, typeof(Table));
@@ -29,6 +29,62 @@ namespace NSL.DataConversion.Core.Tests.Unit
 #pragma warning restore xUnit2004 // Do not use equality check to test for boolean conditions
             Assert.Equal(5, v3);
             Assert.Equal(typeof(Table), v4);
+        }
+
+        [Fact]
+        public void Indexer_SetWorks()
+        {
+            // Arrange
+            var table = new Table(new Cell[2, 2]);
+            // Act
+            table[1, 0] = new Cell("string");
+            table[0, 1] = new Cell(typeof(Cell));
+            // Assert
+            Assert.Equal("string", table[1, 0].Value);
+            Assert.Equal(typeof(Cell), table[0, 1].Value);
+        }
+
+        [Fact]
+        public void GetEnumerator_Works()
+        {
+            // Arrange
+            var table = InitializeTable(2, 2, "string", true, typeof(Cell), 5);
+            // Act
+            foreach (ICell cell in table)
+            {
+                // Assert
+                Assert.NotNull(cell);
+            }
+        }
+
+        [Fact]
+        public void IGenericCellsTable_GetCell_ReturnsRightTypeValue()
+        {
+            // Arrange
+            IGenericCellsTable table = InitializeTable(2, 2, "string", true, typeof(Cell), 5);
+            // Act
+            var v1 = table.GetCell<string>(0, 0);
+            var v2 = table.GetCell<bool>(0, 1);
+            var v3 = table.GetCell<Type>(1, 0);
+            var v4 = table.GetCell<int>(1, 1);
+            // Assert
+            Assert.IsAssignableFrom<ICell<string>>(v1);
+            Assert.IsAssignableFrom<ICell<bool>>(v2);
+            Assert.IsAssignableFrom<ICell<Type>>(v3);
+            Assert.IsAssignableFrom<ICell<int>>(v4);
+        }
+
+        [Fact]
+        public void GenericCellsTable_GetCell_ReturnsNullForWrongTypeValue()
+        {
+            // Arrange
+            var table = InitializeTable(2, 2, "string", true, typeof(Cell), 5);
+            // Act
+            table[1, 0] = new Cell("string");
+            table[0, 1] = new Cell(typeof(Cell));
+            // Assert
+            Assert.Equal("string", table[1, 0].Value);
+            Assert.Equal(typeof(Cell), table[0, 1].Value);
         }
 
         private Table InitializeTable(int dim1, int dim2, params object[] values)

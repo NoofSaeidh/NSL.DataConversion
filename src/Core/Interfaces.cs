@@ -31,7 +31,7 @@ namespace NSL.DataConversion.Core
 
     public interface IGenericCellsTable : ITable
     {
-        ICell<T> GetCell<T>(int i, int j) where T : class;
+        ICell<T> GetCell<T>(int i, int j);
     }
 
     public interface IIntersectionTable : ITable
