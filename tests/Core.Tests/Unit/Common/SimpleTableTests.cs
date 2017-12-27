@@ -36,20 +36,20 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         public void Indexer_SetWorks()
         {
             // Arrange
-            var table = new SimpleTable(new Cell[2, 2]);
+            var table = new SimpleTable(new MockCell[2, 2]);
             // Act
-            table[1, 0] = new Cell("string");
-            table[0, 1] = new Cell(typeof(Cell));
+            table[1, 0] = new MockCell("string");
+            table[0, 1] = new MockCell(typeof(MockCell));
             // Assert
             Assert.Equal("string", table[1, 0].Value);
-            Assert.Equal(typeof(Cell), table[0, 1].Value);
+            Assert.Equal(typeof(MockCell), table[0, 1].Value);
         }
 
         [Fact]
         public void GetEnumerator_Works()
         {
             // Arrange
-            var table = InitializeTable(2, 2, "string", true, typeof(Cell), 5);
+            var table = InitializeTable(2, 2, "string", true, typeof(MockCell), 5);
             // Act
             foreach (ICell cell in table)
             {
@@ -62,7 +62,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         public void IGenericCellsTable_GetCell_ReturnsRightTypeValue()
         {
             // Arrange
-            IGenericCellsTable table = InitializeTable(2, 2, "string", true, typeof(Cell), 5);
+            IGenericCellsTable table = InitializeTable(2, 2, "string", true, typeof(MockCell), 5);
             // Act
             var v1 = table.GetCell<string>(0, 0);
             var v2 = table.GetCell<bool>(0, 1);
@@ -79,26 +79,36 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         public void GenericCellsTable_GetCell_ReturnsNullForWrongTypeValue()
         {
             // Arrange
-            var table = InitializeTable(2, 2, "string", true, typeof(Cell), 5);
+            var table = InitializeTable(2, 2, "string", true, typeof(MockCell), 5);
             // Act
-            table[1, 0] = new Cell("string");
-            table[0, 1] = new Cell(typeof(Cell));
+            table[1, 0] = new MockCell("string");
+            table[0, 1] = new MockCell(typeof(MockCell));
             // Assert
             Assert.Equal("string", table[1, 0].Value);
-            Assert.Equal(typeof(Cell), table[0, 1].Value);
+            Assert.Equal(typeof(MockCell), table[0, 1].Value);
         }
 
         private SimpleTable InitializeTable(int dim1, int dim2, params object[] values)
         {
-            var cells = new Cell[dim1, dim2];
+            var cells = new MockCell[dim1, dim2];
             for (int i = 0, k = 0; i < dim1; i++)
             {
                 for (int j = 0; j < dim2; j++, k++)
                 {
-                    cells[i, j] = new Cell(values[k]);
+                    cells[i, j] = new MockCell(values[k]);
                 }
             }
             return new SimpleTable(cells);
+        }
+
+        public class MockCell : ICell
+        {
+            public MockCell(object value)
+            {
+                Value = value;
+            }
+
+            public object Value { get; }
         }
     }
 }
