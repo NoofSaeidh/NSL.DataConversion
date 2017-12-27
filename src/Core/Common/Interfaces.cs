@@ -27,6 +27,12 @@ namespace NSL.DataConversion.Core.Common
 
     public interface ITable : IEnumerable<ICell>
     {
+        /// <summary>
+        ///     Get or set value of cell on intercetion of specified column and row.
+        /// </summary>
+        /// <param name="i">Column number.</param>
+        /// <param name="j">Row number.</param>
+        /// <returns>Cell.</returns>
         ICell this[int i, int j] { get; set; }
     }
 
