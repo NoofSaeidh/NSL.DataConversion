@@ -90,4 +90,18 @@ namespace NSL.DataConversion.Core.Common
     }
 
     #endregion
+
+    #region IResolver
+
+    public interface IResolver<T>
+    {
+        T Resolve(object value);
+    }
+
+    public interface IGenericResolver<T>
+    {
+        T Resolve<U>(U value);
+    }
+
+    #endregion
 }
