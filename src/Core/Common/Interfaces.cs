@@ -99,14 +99,19 @@ namespace NSL.DataConversion.Core.Common
 
     #region IResolver
 
-    public interface IResolver<T>
+    public interface IResolver<TIn, TOut>
     {
-        T Resolve(object value);
+        TOut Resolve(TIn value);
+    }
+
+    public interface IObjectResolver<T>
+    {
+        T ResolveObject(object value);
     }
 
     public interface IGenericResolver<T>
     {
-        T Resolve<U>(U value);
+        T ResolveGeneric<U>(U value);
     }
 
     #endregion

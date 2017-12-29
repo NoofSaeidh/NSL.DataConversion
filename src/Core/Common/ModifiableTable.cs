@@ -25,7 +25,7 @@ namespace NSL.DataConversion.Core.Common
         }
 
         //todo: move from here
-        public ModifiableTable(object[,] items, IResolver<ICell> cellResolver = null)
+        public ModifiableTable(object[,] items, IObjectResolver<ICell> cellResolver = null)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
@@ -40,7 +40,7 @@ namespace NSL.DataConversion.Core.Common
                 _items[i] = new List<ICell>(jmax);
                 for (int j = 0; j < jmax; j++)
                 {
-                    _items[i][j] = cellResolver.Resolve(items[i, j]);
+                    _items[i][j] = cellResolver.ResolveObject(items[i, j]);
                 }
             }
         }
