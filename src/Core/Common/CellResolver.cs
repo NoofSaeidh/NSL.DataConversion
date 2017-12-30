@@ -13,6 +13,7 @@ namespace NSL.DataConversion.Core.Common
     public class CellResolver : IObjectResolver<ICell>, IGenericResolver<ICell>
         , IResolver<object, ICell>
         , IResolver<object[,], ICell[,]>, IResolver<IEnumerable<IEnumerable<object>>, ICell[,]>
+        , IResolver<object[,], IList<IList<ICell>>>, IResolver<IEnumerable<IEnumerable<object>>, IList<IList<ICell>>>
     {
         private static readonly Lazy<CellResolver> lazy = new Lazy<CellResolver>();
 
@@ -42,7 +43,7 @@ namespace NSL.DataConversion.Core.Common
             {
                 for (int j = 0; j < jmax; j++)
                 {
-                    result[i, j] = ((IObjectResolver<ICell>)this).ResolveObject(value[i, j]);
+                    result[i, j] = ResolveObject(value[i, j]);
                 }
             }
             return result;
@@ -65,6 +66,28 @@ namespace NSL.DataConversion.Core.Common
                 }
             }
             return result;
+        }
+
+        IList<IList<ICell>> IResolver<object[,], IList<IList<ICell>>>.Resolve(object[,] value)
+        {
+            var imax = value.GetLength(0);
+            var jmax = value.GetLength(1);
+            var result = new List<IList<ICell>>(imax);
+            for (int i = 0; i < imax; i++)
+            {
+                result.Add(new List<ICell>(jmax));
+                for (int j = 0; j < jmax; j++)
+                {
+                    result[i].Add(ResolveObject(value[i, j]));
+                }
+            }
+            return result;
+        }
+
+        IList<IList<ICell>> IResolver<IEnumerable<IEnumerable<object>>, IList<IList<ICell>>>.Resolve(
+            IEnumerable<IEnumerable<object>> value)
+        {
+            return value.Select(x => (IList<ICell>)x.Select(item => ResolveObject(item)).ToList()).ToList();
         }
     }
 }

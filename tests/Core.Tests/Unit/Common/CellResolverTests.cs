@@ -11,7 +11,6 @@ using Xunit;
 
 namespace NSL.DataConversion.Core.Tests.Unit.Common
 {
-    //is it unit or integration tests?
     public class CellResolverTests
     {
         [Fact]
@@ -209,6 +208,98 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
             Assert.NotNull(result[0, 1]);
             Assert.Null(result[1, 0].Value);
             Assert.Null(result[0, 1].Value);
+        }
+
+        [Fact]
+        public void Resolve_ToIList_Array_ResolvesWithRightValues()
+        {
+            // Arrange
+            IResolver<object[,], IList<IList<ICell>>> resolver = new CellResolver();
+            object[,] array =
+            {
+                {"string", 0 },
+                {true, typeof(CellResolver) }
+            };
+            // Act
+            var result = resolver.Resolve(array);
+            // Assert
+            Assert.Collection(result
+                , list => Assert.Collection(list
+                    , item => Assert.Equal("string", item.Value)
+                    , item => Assert.Equal(0, item.Value))
+                , list => Assert.Collection(list
+#pragma warning disable xUnit2004 // Do not use equality check to test for boolean conditions
+                    , item => Assert.Equal(true, item.Value)
+#pragma warning restore xUnit2004 // Do not use equality check to test for boolean conditions
+                    , item => Assert.Equal(typeof(CellResolver), item.Value)));
+        }
+
+        [Fact]
+        public void Resolve_ToIList_Array_ResolvesWithRightGenericTypes()
+        {
+            // Arrange
+            IResolver<object[,], IList<IList<ICell>>> resolver = new CellResolver();
+            object[,] array =
+            {
+                {"string", 0 },
+                {true, typeof(CellResolver) }
+            };
+            // Act
+            var result = resolver.Resolve(array);
+            // Assert
+            Assert.Collection(result
+                , list => Assert.Collection(list
+                    , item => Assert.IsAssignableFrom<ICell<string>>(item)
+                    , item => Assert.IsAssignableFrom<ICell<int>>(item))
+                , list => Assert.Collection(list
+                    , item => Assert.IsAssignableFrom<ICell<bool>>(item)
+                    , item => Assert.IsAssignableFrom<ICell<Type>>(item)));
+        }
+
+        [Fact]
+        public void Resolve_ToIList_IEnumerable_ResolvesWithRightValues()
+        {
+            // Arrange
+            IResolver<IEnumerable<IEnumerable<object>>, IList<IList<ICell>>> resolver = new CellResolver();
+            IEnumerable<IEnumerable<object>> list = new List<List<object>>
+            {
+                new List<object>{"string", 0 },
+                new List<object>{true, typeof(CellResolver)}
+            };
+            // Act
+            var result = resolver.Resolve(list);
+            // Assert
+            Assert.Collection(result
+               , _list => Assert.Collection(_list
+                   , item => Assert.Equal("string", item.Value)
+                   , item => Assert.Equal(0, item.Value))
+               , _list => Assert.Collection(_list
+#pragma warning disable xUnit2004 // Do not use equality check to test for boolean conditions
+                    , item => Assert.Equal(true, item.Value)
+#pragma warning restore xUnit2004 // Do not use equality check to test for boolean conditions
+                    , item => Assert.Equal(typeof(CellResolver), item.Value)));
+        }
+
+        [Fact]
+        public void Resolve_ToIList_IEnumerable_ResolvesWithRightGenericTypes()
+        {
+            // Arrange
+            IResolver<IEnumerable<IEnumerable<object>>, IList<IList<ICell>>> resolver = new CellResolver();
+            IEnumerable<IEnumerable<object>> list = new List<List<object>>
+            {
+                new List<object>{"string", 0 },
+                new List<object>{true, typeof(CellResolver)}
+            };
+            // Act
+            var result = resolver.Resolve(list);
+            // Assert
+            Assert.Collection(result
+                , _list => Assert.Collection(_list
+                    , item => Assert.IsAssignableFrom<ICell<string>>(item)
+                    , item => Assert.IsAssignableFrom<ICell<int>>(item))
+                , _list => Assert.Collection(_list
+                    , item => Assert.IsAssignableFrom<ICell<bool>>(item)
+                    , item => Assert.IsAssignableFrom<ICell<Type>>(item)));
         }
     }
 }
