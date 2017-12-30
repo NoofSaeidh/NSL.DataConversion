@@ -10,31 +10,27 @@ using System.Threading.Tasks;
 
 namespace NSL.DataConversion.Core.Common
 {
-    public class CellResolver : IObjectResolver<ICell>, IGenericResolver<ICell>
-        , IResolver<object, ICell>
+    public class CellResolver : ICellResolver
+        , IObjectResolver<ICell>, IGenericResolver<ICell>, IResolver<object, ICell>
         , IResolver<object[,], ICell[,]>, IResolver<IEnumerable<IEnumerable<object>>, ICell[,]>
         , IResolver<object[,], IList<IList<ICell>>>, IResolver<IEnumerable<IEnumerable<object>>, IList<IList<ICell>>>
     {
         private static readonly Lazy<CellResolver> lazy = new Lazy<CellResolver>();
 
-        public static CellResolver Instance => lazy.Value;
+        public static ICellResolver Instance => lazy.Value;
 
-        public ICell<T> Resolve<T>(T value)
+        public virtual ICell<T> Resolve<T>(T value)
         {
             return new Cell<T>(value);
         }
 
-        public ICell ResolveObject(object value)
+        public virtual ICell ResolveObject(object value)
         {
             if (value == null) return new Cell(value);
             return (ICell)Activator.CreateInstance(typeof(Cell<>).MakeGenericType(value.GetType()), value);
         }
 
-        ICell IResolver<object, ICell>.Resolve(object value) => ResolveObject(value);
-
-        public ICell ResolveGeneric<U>(U value) => Resolve(value);
-
-        public ICell[,] Resolve(object[,] value)
+        public virtual ICell[,] ResolveToArray(object[,] value)
         {
             var imax = value.GetLength(0);
             var jmax = value.GetLength(1);
@@ -49,7 +45,7 @@ namespace NSL.DataConversion.Core.Common
             return result;
         }
 
-        public ICell[,] Resolve(IEnumerable<IEnumerable<object>> value)
+        public virtual ICell[,] ResolveToArray(IEnumerable<IEnumerable<object>> value)
         {
             var array = value.Select(x => x.ToArray()).ToArray();
             var jmax = array.Max(x => x.Length);
@@ -68,7 +64,7 @@ namespace NSL.DataConversion.Core.Common
             return result;
         }
 
-        IList<IList<ICell>> IResolver<object[,], IList<IList<ICell>>>.Resolve(object[,] value)
+        public virtual IList<IList<ICell>> ResolveToList(object[,] value)
         {
             var imax = value.GetLength(0);
             var jmax = value.GetLength(1);
@@ -84,10 +80,21 @@ namespace NSL.DataConversion.Core.Common
             return result;
         }
 
-        IList<IList<ICell>> IResolver<IEnumerable<IEnumerable<object>>, IList<IList<ICell>>>.Resolve(
-            IEnumerable<IEnumerable<object>> value)
+        public virtual IList<IList<ICell>> ResolveToList(IEnumerable<IEnumerable<object>> value)
         {
             return value.Select(x => (IList<ICell>)x.Select(item => ResolveObject(item)).ToList()).ToList();
         }
+
+        ICell IResolver<object, ICell>.Resolve(object value) => ResolveObject(value);
+
+        ICell IGenericResolver<ICell>.ResolveGeneric<U>(U value) => Resolve(value);
+
+        ICell[,] IResolver<object[,], ICell[,]>.Resolve(object[,] value) => ResolveToArray(value);
+
+        ICell[,] IResolver<IEnumerable<IEnumerable<object>>, ICell[,]>.Resolve(IEnumerable<IEnumerable<object>> value) => ResolveToArray(value);
+
+        IList<IList<ICell>> IResolver<object[,], IList<IList<ICell>>>.Resolve(object[,] value) => ResolveToList(value);
+
+        IList<IList<ICell>> IResolver<IEnumerable<IEnumerable<object>>, IList<IList<ICell>>>.Resolve(IEnumerable<IEnumerable<object>> value) => ResolveToList(value);
     }
 }

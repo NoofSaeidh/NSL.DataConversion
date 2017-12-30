@@ -75,7 +75,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         public void ResolveGeneric_WorksTheSameAsResolveObject()
         {
             // Arrange
-            var resolver = new CellResolver();
+            IGenericResolver<ICell> resolver = new CellResolver();
             // Act
             var result1 = resolver.ResolveGeneric(new object());
             var result2 = resolver.ResolveGeneric(5);
@@ -89,7 +89,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         [Fact]
-        public void Resolve_Array_ResolvesWithRightValues()
+        public void ResolveToArray_ResolvesWithRightValues()
         {
             // Arrange
             var resolver = new CellResolver();
@@ -99,7 +99,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
                 {true, typeof(CellResolver) }
             };
             // Act
-            var result = resolver.Resolve(array);
+            var result = resolver.ResolveToArray(array);
             // Assert
             Assert.Collection(result.Cast<ICell>()
                 , item => Assert.Equal("string", item.Value)
@@ -111,7 +111,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         [Fact]
-        public void Resolve_Array_ResolvesWithRightGenericTypes()
+        public void ResolveToArray_ResolvesWithRightGenericTypes()
         {
             // Arrange
             var resolver = new CellResolver();
@@ -121,7 +121,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
                 {true, typeof(CellResolver) }
             };
             // Act
-            var result = resolver.Resolve(array);
+            var result = resolver.ResolveToArray(array);
             // Assert
             Assert.Collection(result.Cast<ICell>()
                 , item => Assert.IsAssignableFrom<ICell<string>>(item)
@@ -131,7 +131,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         [Fact]
-        public void Resolve_Array_ResolvesNullAsCellsWithNullValue()
+        public void ResolveToArray_ResolvesNullAsCellsWithNullValue()
         {
             // Arrange
             var resolver = new CellResolver();
@@ -141,7 +141,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
                 {null, typeof(CellResolver) }
             };
             // Act
-            var result = resolver.Resolve(array);
+            var result = resolver.ResolveToArray(array);
             // Assert
             Assert.NotNull(result[1, 0]);
             Assert.NotNull(result[0, 1]);
@@ -150,7 +150,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         [Fact]
-        public void Resolve_IEnumerable_ResolvesWithRightValues()
+        public void ResolveToArray_Enumerable_ResolvesWithRightValues()
         {
             // Arrange
             var resolver = new CellResolver();
@@ -160,7 +160,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
                 new List<object>{true, typeof(CellResolver)}
             };
             // Act
-            var result = resolver.Resolve(list);
+            var result = resolver.ResolveToArray(list);
             // Assert
             Assert.Collection(result.Cast<ICell>()
                 , item => Assert.Equal("string", item.Value)
@@ -172,7 +172,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         [Fact]
-        public void Resolve_IEnumerable_ResolvesWithRightGenericTypes()
+        public void ResolveToArray_Enumerable_ResolvesWithRightGenericTypes()
         {
             // Arrange
             var resolver = new CellResolver();
@@ -182,7 +182,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
                 new List<object>{true, typeof(CellResolver)}
             };
             // Act
-            var result = resolver.Resolve(list);
+            var result = resolver.ResolveToArray(list);
             // Assert
             Assert.Collection(result.Cast<ICell>()
                 , item => Assert.IsAssignableFrom<ICell<string>>(item)
@@ -192,7 +192,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         [Fact]
-        public void Resolve_IEnumerable_ResolvesNullAsCellsWithNullValue()
+        public void ResolveToArray_Enumerable_ResolvesNullAsCellsWithNullValue()
         {
             // Arrange
             var resolver = new CellResolver();
@@ -202,7 +202,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
                 new List<object>{null, typeof(CellResolver)}
             };
             // Act
-            var result = resolver.Resolve(list);
+            var result = resolver.ResolveToArray(list);
             // Assert
             Assert.NotNull(result[1, 0]);
             Assert.NotNull(result[0, 1]);
@@ -211,17 +211,17 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         [Fact]
-        public void Resolve_ToIList_Array_ResolvesWithRightValues()
+        public void ResolveToList_ResolvesWithRightValues()
         {
             // Arrange
-            IResolver<object[,], IList<IList<ICell>>> resolver = new CellResolver();
+            var resolver = new CellResolver();
             object[,] array =
             {
                 {"string", 0 },
                 {true, typeof(CellResolver) }
             };
             // Act
-            var result = resolver.Resolve(array);
+            var result = resolver.ResolveToList(array);
             // Assert
             Assert.Collection(result
                 , list => Assert.Collection(list
@@ -235,17 +235,17 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         [Fact]
-        public void Resolve_ToIList_Array_ResolvesWithRightGenericTypes()
+        public void ResolveToList_ResolvesWithRightGenericTypes()
         {
             // Arrange
-            IResolver<object[,], IList<IList<ICell>>> resolver = new CellResolver();
+            var resolver = new CellResolver();
             object[,] array =
             {
                 {"string", 0 },
                 {true, typeof(CellResolver) }
             };
             // Act
-            var result = resolver.Resolve(array);
+            var result = resolver.ResolveToList(array);
             // Assert
             Assert.Collection(result
                 , list => Assert.Collection(list
@@ -257,17 +257,36 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         [Fact]
-        public void Resolve_ToIList_IEnumerable_ResolvesWithRightValues()
+        public void ResolveToList_ResolvesNullAsCellsWithNullValue()
         {
             // Arrange
-            IResolver<IEnumerable<IEnumerable<object>>, IList<IList<ICell>>> resolver = new CellResolver();
+            var resolver = new CellResolver();
+            IEnumerable<IEnumerable<object>> list = new List<List<object>>
+            {
+                new List<object>{"string", null },
+                new List<object>{null, typeof(CellResolver)}
+            };
+            // Act
+            var result = resolver.ResolveToList(list);
+            // Assert
+            Assert.NotNull(result[1][0]);
+            Assert.NotNull(result[0][1]);
+            Assert.Null(result[1][0].Value);
+            Assert.Null(result[0][1].Value);
+        }
+
+        [Fact]
+        public void ResolveToList_Enumerable_ResolvesWithRightValues()
+        {
+            // Arrange
+            var resolver = new CellResolver();
             IEnumerable<IEnumerable<object>> list = new List<List<object>>
             {
                 new List<object>{"string", 0 },
                 new List<object>{true, typeof(CellResolver)}
             };
             // Act
-            var result = resolver.Resolve(list);
+            var result = resolver.ResolveToList(list);
             // Assert
             Assert.Collection(result
                , _list => Assert.Collection(_list
@@ -281,17 +300,17 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         [Fact]
-        public void Resolve_ToIList_IEnumerable_ResolvesWithRightGenericTypes()
+        public void ResolveToList_Enumerable_ResolvesWithRightGenericTypes()
         {
             // Arrange
-            IResolver<IEnumerable<IEnumerable<object>>, IList<IList<ICell>>> resolver = new CellResolver();
+            var resolver = new CellResolver();
             IEnumerable<IEnumerable<object>> list = new List<List<object>>
             {
                 new List<object>{"string", 0 },
                 new List<object>{true, typeof(CellResolver)}
             };
             // Act
-            var result = resolver.Resolve(list);
+            var result = resolver.ResolveToList(list);
             // Assert
             Assert.Collection(result
                 , _list => Assert.Collection(_list
@@ -300,6 +319,25 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
                 , _list => Assert.Collection(_list
                     , item => Assert.IsAssignableFrom<ICell<bool>>(item)
                     , item => Assert.IsAssignableFrom<ICell<Type>>(item)));
+        }
+
+        [Fact]
+        public void ResolveToList_Enumerable_ResolvesNullAsCellsWithNullValue()
+        {
+            // Arrange
+            var resolver = new CellResolver();
+            IEnumerable<IEnumerable<object>> list = new List<List<object>>
+            {
+                new List<object>{"string", null },
+                new List<object>{null, typeof(CellResolver)}
+            };
+            // Act
+            var result = resolver.ResolveToList(list);
+            // Assert
+            Assert.NotNull(result[1][0]);
+            Assert.NotNull(result[0][1]);
+            Assert.Null(result[1][0].Value);
+            Assert.Null(result[0][1].Value);
         }
     }
 }
