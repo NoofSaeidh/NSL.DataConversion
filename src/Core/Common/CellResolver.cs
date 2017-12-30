@@ -82,7 +82,16 @@ namespace NSL.DataConversion.Core.Common
 
         public virtual IList<IList<ICell>> ResolveToList(IEnumerable<IEnumerable<object>> value)
         {
-            return value.Select(x => (IList<ICell>)x.Select(item => ResolveObject(item)).ToList()).ToList();
+            var result = value.Select(x => (IList<ICell>)x.Select(item => ResolveObject(item)).ToList()).ToList();
+            var max = result.Max(x => x.Count);
+            foreach (var item in result)
+            {
+                while (item.Count < max)
+                {
+                    item.Add(ResolveObject(null));
+                }
+            }
+            return result;
         }
 
         ICell IResolver<object, ICell>.Resolve(object value) => ResolveObject(value);

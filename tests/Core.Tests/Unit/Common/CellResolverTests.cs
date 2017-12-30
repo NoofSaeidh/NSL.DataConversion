@@ -211,6 +211,26 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         [Fact]
+        public void ResolveToArray_Enumerable_ResolvesMissingValuesAsCellsWithNullValue()
+        {
+            // Arrange
+            var resolver = new CellResolver();
+            IEnumerable<IEnumerable<object>> list = new List<List<object>>
+            {
+                new List<object>{"string", null, null },
+                new List<object>{null}
+            };
+            // Act
+            var result = resolver.ResolveToArray(list);
+            // Assert
+            Assert.NotNull(result[1, 1]);
+            Assert.NotNull(result[1, 2]);
+
+            Assert.Null(result[1, 1].Value);
+            Assert.Null(result[1, 2].Value);
+        }
+
+        [Fact]
         public void ResolveToList_ResolvesWithRightValues()
         {
             // Arrange
@@ -338,6 +358,47 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
             Assert.NotNull(result[0][1]);
             Assert.Null(result[1][0].Value);
             Assert.Null(result[0][1].Value);
+        }
+
+        [Fact]
+        public void ResolveToList_Enumerable_ResolvesMissingValuesAsCellsWithNullValue()
+        {
+            // Arrange
+            var resolver = new CellResolver();
+            IEnumerable<IEnumerable<object>> list = new List<List<object>>
+            {
+                new List<object>{"string", null, null },
+                new List<object>{null}
+            };
+            // Act
+            var result = resolver.ResolveToList(list);
+            // Assert
+            Assert.NotNull(result[1][1]);
+            Assert.NotNull(result[1][2]);
+
+            Assert.Null(result[1][1].Value);
+            Assert.Null(result[1][2].Value);
+        }
+
+        [Fact]
+        public void ResolveToList_Enumerable_ResolvesToRectangleList()
+        {
+            // Arrange
+            var resolver = new CellResolver();
+            IEnumerable<IEnumerable<object>> list = new List<List<object>>
+            {
+                new List<object>{"string", null, null },
+                new List<object>{null},
+                new List<object>(),
+                new List<object>{null, null, true, 5, 4},
+            };
+            // Act
+            var result = resolver.ResolveToList(list);
+            // Assert
+            foreach (var item in result)
+            {
+                Assert.Equal(5, item.Count);
+            }
         }
     }
 }
