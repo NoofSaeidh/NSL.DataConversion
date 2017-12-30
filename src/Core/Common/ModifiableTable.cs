@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace NSL.DataConversion.Core.Common
 {
-    public class ModifiableTable : IIntersectionModifiableTable, ITable, IGenericCellsTable
+    public class ModifiableTable : IModifiableTable, ITable, IGenericCellsTable
     {
         private readonly List<List<ICell>> _items;
 
@@ -24,39 +24,27 @@ namespace NSL.DataConversion.Core.Common
             _items = items.Select(x => x.ToList()).ToList();
         }
 
-        //todo: move from here
-        public ModifiableTable(object[,] items, IObjectResolver<ICell> cellResolver = null)
+        public ModifiableTable(ICell[,] items)
         {
-            if (items == null)
-                throw new ArgumentNullException(nameof(items));
-
-            if (cellResolver == null) cellResolver = CellResolver.Instance;
-
             var imax = items.GetLength(0);
             var jmax = items.GetLength(1);
             _items = new List<List<ICell>>(imax);
             for (int i = 0; i < imax; i++)
             {
-                _items[i] = new List<ICell>(jmax);
+                _items.Add(new List<ICell>(jmax));
                 for (int j = 0; j < jmax; j++)
                 {
-                    _items[i][j] = cellResolver.ResolveObject(items[i, j]);
+                    _items[i].Add(items[i, j]);
                 }
             }
         }
 
         #endregion
 
-        /// <summary>
-        ///     Get or set value of cell on intercetion of specified column and row.
-        /// </summary>
-        /// <param name="i">Column number.</param>
-        /// <param name="j">Row number.</param>
-        /// <returns>Cell.</returns>
-        public ICell this[int i, int j]
+        public ICell this[int row, int column]
         {
-            get => _items[i][j];
-            set => _items[i][j] = value;
+            get => _items[row][column];
+            set => _items[row][column] = value;
         }
 
         public void AddColumn(IEnumerable<ICell> column)
@@ -79,7 +67,7 @@ namespace NSL.DataConversion.Core.Common
             }
         }
 
-        public ICell<T> GetCell<T>(int i, int j)
+        public ICell<T> GetCell<T>(int row, int column)
         {
             throw new NotImplementedException();
         }

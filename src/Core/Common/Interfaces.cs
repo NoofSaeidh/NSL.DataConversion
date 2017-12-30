@@ -30,20 +30,20 @@ namespace NSL.DataConversion.Core.Common
         /// <summary>
         ///     Get or set value of cell on intercetion of specified column and row.
         /// </summary>
-        /// <param name="i">Column number.</param>
-        /// <param name="j">Row number.</param>
+        /// <param name="row">Row index.</param>
+        /// <param name="column">Column index.</param>
         /// <returns>Cell.</returns>
-        ICell this[int i, int j] { get; set; }
+        ICell this[int row, int column] { get; set; }
     }
 
     public interface IReadOnlyTable : IEnumerable<ICell>
     {
-        ICell this[int i, int j] { get; }
+        ICell this[int row, int column] { get; }
     }
 
     public interface IGenericCellsTable : ITable
     {
-        ICell<T> GetCell<T>(int i, int j);
+        ICell<T> GetCell<T>(int row, int column);
     }
 
     public interface IIntersectionTable : ITable
@@ -53,7 +53,7 @@ namespace NSL.DataConversion.Core.Common
         IEnumerable<ICell> GetRow(int index);
     }
 
-    public interface IIntersectionModifiableTable : IIntersectionTable
+    public interface IModifiableTable : IIntersectionTable
     {
         void AddColumn(IEnumerable<ICell> column);
 
@@ -119,9 +119,13 @@ namespace NSL.DataConversion.Core.Common
         , IResolver<object[,], IList<IList<ICell>>>, IResolver<IEnumerable<IEnumerable<object>>, IList<IList<ICell>>>
     {
         ICell<T> Resolve<T>(T value);
+
         ICell[,] ResolveToArray(IEnumerable<IEnumerable<object>> value);
+
         ICell[,] ResolveToArray(object[,] value);
+
         IList<IList<ICell>> ResolveToList(IEnumerable<IEnumerable<object>> value);
+
         IList<IList<ICell>> ResolveToList(object[,] value);
     }
 

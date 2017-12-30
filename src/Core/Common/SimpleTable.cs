@@ -19,16 +19,10 @@ namespace NSL.DataConversion.Core.Common
             _items = items ?? throw new ArgumentNullException(nameof(items));
         }
 
-        /// <summary>
-        ///     Get or set value of cell on intercetion of specified column and row.
-        /// </summary>
-        /// <param name="i">Column number.</param>
-        /// <param name="j">Row number.</param>
-        /// <returns>Cell.</returns>
-        public ICell this[int i, int j]
+        public ICell this[int row, int column]
         {
-            get => _items[i, j];
-            set => _items[i, j] = value;
+            get => _items[row, column];
+            set => _items[row, column] = value;
         }
 
         public IEnumerator<ICell> GetEnumerator()
@@ -41,11 +35,13 @@ namespace NSL.DataConversion.Core.Common
             return _items.GetEnumerator();
         }
 
-        ICell<T> IGenericCellsTable.GetCell<T>(int i, int j)
+        ICell<T> IGenericCellsTable.GetCell<T>(int row, int column)
         {
-            if (this[i, j]?.Value is T t)
+            if (this[row, column]?.Value is T t)
                 return new Cell<T>(t);
             return null;
         }
+
+        public override string ToString() => $"{nameof(ICell)}[{_items.GetLength(0)}, {_items.GetLength(1)}]";
     }
 }
