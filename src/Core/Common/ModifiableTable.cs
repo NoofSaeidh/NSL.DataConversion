@@ -26,6 +26,7 @@ namespace NSL.DataConversion.Core.Common
 
         public ModifiableTable(ICell[,] items)
         {
+            //todo: create and use TableResolver?
             var imax = items.GetLength(0);
             var jmax = items.GetLength(1);
             _items = new List<List<ICell>>(imax);
@@ -46,6 +47,10 @@ namespace NSL.DataConversion.Core.Common
             get => _items[row][column];
             set => _items[row][column] = value;
         }
+
+        public int RowsCount { get; }
+        public int ColumnsCount { get; }
+        public int Length { get; }
 
         public void AddColumn(IEnumerable<ICell> column)
         {

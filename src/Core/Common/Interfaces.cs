@@ -25,7 +25,7 @@ namespace NSL.DataConversion.Core.Common
 
     #region ITable
 
-    public interface ITable : IEnumerable<ICell>
+    public interface ITable : IReadOnlyTable
     {
         /// <summary>
         ///     Get or set value of cell on intercetion of specified column and row.
@@ -33,12 +33,22 @@ namespace NSL.DataConversion.Core.Common
         /// <param name="row">Row index.</param>
         /// <param name="column">Column index.</param>
         /// <returns>Cell.</returns>
-        ICell this[int row, int column] { get; set; }
+        new ICell this[int row, int column] { get; set; }
     }
 
     public interface IReadOnlyTable : IEnumerable<ICell>
     {
+        /// <summary>
+        ///     Get value of cell on intercetion of specified column and row.
+        /// </summary>
+        /// <param name="row">Row index.</param>
+        /// <param name="column">Column index.</param>
+        /// <returns>Cell.</returns>
         ICell this[int row, int column] { get; }
+
+        int RowsCount { get; }
+        int ColumnsCount { get; }
+        int Length { get; }
     }
 
     public interface IGenericCellsTable : ITable

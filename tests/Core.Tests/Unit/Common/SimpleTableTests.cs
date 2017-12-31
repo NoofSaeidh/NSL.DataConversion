@@ -2,6 +2,7 @@
 // See the LICENSE file in the project root for more information.
 
 using NSL.DataConversion.Core.Common;
+using NSL.DataConversion.Core.Tests.Mocks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,6 +89,23 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
             Assert.Equal(typeof(MockCell), table[0, 1].Value);
         }
 
+        [Theory]
+        [InlineData(2, 3), InlineData(4, 5), InlineData(1, 1)]
+        public void RowsCount_ColumnsCount_Lenght_CountsRight(int rows, int columns)
+        {
+            // Arrange
+            var array = MockCellConstructor.ToArray(new object[rows, columns]);
+            var table = new SimpleTable(array);
+            // Act
+            var rowsCount = table.RowsCount;
+            var columnsCount = table.ColumnsCount;
+            var length = table.Length;
+            // Assert
+            Assert.Equal(rows, rowsCount);
+            Assert.Equal(columns, columnsCount);
+            Assert.Equal(rows * columns, length);
+        }
+
         private SimpleTable InitializeTable(int dim1, int dim2, params object[] values)
         {
             var cells = new MockCell[dim1, dim2];
@@ -99,16 +117,6 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
                 }
             }
             return new SimpleTable(cells);
-        }
-
-        public class MockCell : ICell
-        {
-            public MockCell(object value)
-            {
-                Value = value;
-            }
-
-            public object Value { get; }
         }
     }
 }

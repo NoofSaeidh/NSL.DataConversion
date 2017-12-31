@@ -56,5 +56,7 @@ namespace NSL.DataConversion.Core.Common
         {
             return base.Equals(other);
         }
+
+        public static implicit operator Cell<T>(T value) => new Cell<T>(value);
     }
 }

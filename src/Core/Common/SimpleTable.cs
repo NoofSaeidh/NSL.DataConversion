@@ -14,9 +14,16 @@ namespace NSL.DataConversion.Core.Common
     {
         private readonly ICell[,] _items;
 
+        public int RowsCount { get; }
+        public int ColumnsCount { get; }
+        public int Length { get; }
+
         public SimpleTable(ICell[,] items)
         {
             _items = items ?? throw new ArgumentNullException(nameof(items));
+            RowsCount = _items.GetLength(0);
+            ColumnsCount = _items.GetLength(1);
+            Length = _items.Length;
         }
 
         public ICell this[int row, int column]
