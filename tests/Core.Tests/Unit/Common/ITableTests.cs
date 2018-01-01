@@ -66,6 +66,57 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
             }
         }
 
+        [Theory]
+        [InlineData(2, 3), InlineData(4, 5), InlineData(1, 1)]
+        public virtual void RowsCount_ColumnsCount_Lenght_CountsRight(int rows, int columns)
+        {
+            // Arrange
+            var array = MockCellConstructor.ToArray(new object[rows, columns]);
+            ITable table = GetInstance(array);
+            // Act
+            var rowsCount = table.RowsCount;
+            var columnsCount = table.ColumnsCount;
+            var length = table.Length;
+            // Assert
+            Assert.Equal(rows, rowsCount);
+            Assert.Equal(columns, columnsCount);
+            Assert.Equal(rows * columns, length);
+        }
+
         protected abstract T GetInstance(ICell[,] value);
+    }
+
+    public abstract class IGenericCellsTableTests<T> where T : IGenericCellsTable
+    {
+        [Fact]
+        public virtual void IGenericCellsTable_GetCell_ReturnsRightTypeValue()
+        {
+            // Arrange
+            IGenericCellsTable table = GetInstance(MockCellConstructor.ToArray(new object[,]
+            {
+                {"string", true },
+                {typeof(MockCell), 5 }
+            }));
+            // Act
+            var v1 = table.GetCell<string>(0, 0);
+            var v2 = table.GetCell<bool>(0, 1);
+            var v3 = table.GetCell<Type>(1, 0);
+            var v4 = table.GetCell<int>(1, 1);
+            // Assert
+            Assert.IsAssignableFrom<ICell<string>>(v1);
+            Assert.IsAssignableFrom<ICell<bool>>(v2);
+            Assert.IsAssignableFrom<ICell<Type>>(v3);
+            Assert.IsAssignableFrom<ICell<int>>(v4);
+        }
+
+        protected abstract T GetInstance(ICell[,] value);
+    }
+
+    public abstract class IIntersectionTableTests<T> : ITableTests<T> where T : IIntersectionTable
+    {
+    }
+
+    public abstract class IModifiableTableTests<T> : ITableTests<T> where T : IModifiableTable
+    {
     }
 }

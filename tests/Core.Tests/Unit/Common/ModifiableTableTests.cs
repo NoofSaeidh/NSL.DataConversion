@@ -12,11 +12,13 @@ using Xunit;
 
 namespace NSL.DataConversion.Core.Tests.Unit.Common
 {
-    public class ModifiableTableTests : ITableTests<ModifiableTable>
+    public class ModifiableTableTests : IModifiableTableTests<ModifiableTable>
     {
-        protected override ModifiableTable GetInstance(ICell[,] value)
-        {
-            return new ModifiableTable(value);
-        }
+        protected override ModifiableTable GetInstance(ICell[,] value) => new ModifiableTable(value);
+    }
+
+    public class ModifiableTableTests_GenericCells : IGenericCellsTableTests<ModifiableTable>
+    {
+        protected override ModifiableTable GetInstance(ICell[,] value) => new ModifiableTable(value);
     }
 }
