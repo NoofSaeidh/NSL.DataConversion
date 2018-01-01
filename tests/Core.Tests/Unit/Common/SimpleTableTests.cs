@@ -12,61 +12,8 @@ using Xunit;
 
 namespace NSL.DataConversion.Core.Tests.Unit.Common
 {
-    public class SimpleTableTests
+    public class SimpleTableTests : ITableTests<SimpleTable>
     {
-        [Fact]
-        public void Indexer_GetWorks()
-        {
-            // Arrange
-            var table = new SimpleTable(MockCellConstructor.ToArray(new object[,]
-            {
-                {"string", true },
-                {5, typeof(SimpleTable) }
-            }));
-            // Act
-            var v1 = table[0, 0].Value;
-            var v2 = table[0, 1].Value;
-            var v3 = table[1, 0].Value;
-            var v4 = table[1, 1].Value;
-            // Assert
-            Assert.Equal("string", v1);
-#pragma warning disable xUnit2004 // Do not use equality check to test for boolean conditions
-            Assert.Equal(true, v2);
-#pragma warning restore xUnit2004 // Do not use equality check to test for boolean conditions
-            Assert.Equal(5, v3);
-            Assert.Equal(typeof(SimpleTable), v4);
-        }
-
-        [Fact]
-        public void Indexer_SetWorks()
-        {
-            // Arrange
-            var table = new SimpleTable(new MockCell[2, 2]);
-            // Act
-            table[1, 0] = new MockCell("string");
-            table[0, 1] = new MockCell(typeof(MockCell));
-            // Assert
-            Assert.Equal("string", table[1, 0].Value);
-            Assert.Equal(typeof(MockCell), table[0, 1].Value);
-        }
-
-        [Fact]
-        public void GetEnumerator_Works()
-        {
-            // Arrange
-            var table = new SimpleTable(MockCellConstructor.ToArray(new object[,]
-            {
-                {"string", true },
-                {typeof(MockCell), 5 }
-            }));
-            // Act
-            foreach (ICell cell in table)
-            {
-                // Assert
-                Assert.NotNull(cell);
-            }
-        }
-
         [Fact]
         public void IGenericCellsTable_GetCell_ReturnsRightTypeValue()
         {
@@ -120,6 +67,11 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
             Assert.Equal(rows, rowsCount);
             Assert.Equal(columns, columnsCount);
             Assert.Equal(rows * columns, length);
+        }
+
+        protected override SimpleTable GetInstance(ICell[,] value)
+        {
+            return new SimpleTable(value);
         }
     }
 }
