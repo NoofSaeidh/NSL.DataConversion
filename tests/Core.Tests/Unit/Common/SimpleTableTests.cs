@@ -18,14 +18,18 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         public void Indexer_GetWorks()
         {
             // Arrange
-            var table = InitializeTable(2, 2, "a", true, 5, typeof(SimpleTable));
+            var table = new SimpleTable(MockCellConstructor.ToArray(new object[,]
+            {
+                {"string", true },
+                {5, typeof(SimpleTable) }
+            }));
             // Act
             var v1 = table[0, 0].Value;
             var v2 = table[0, 1].Value;
             var v3 = table[1, 0].Value;
             var v4 = table[1, 1].Value;
             // Assert
-            Assert.Equal("a", v1);
+            Assert.Equal("string", v1);
 #pragma warning disable xUnit2004 // Do not use equality check to test for boolean conditions
             Assert.Equal(true, v2);
 #pragma warning restore xUnit2004 // Do not use equality check to test for boolean conditions
@@ -50,7 +54,11 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         public void GetEnumerator_Works()
         {
             // Arrange
-            var table = InitializeTable(2, 2, "string", true, typeof(MockCell), 5);
+            var table = new SimpleTable(MockCellConstructor.ToArray(new object[,]
+            {
+                {"string", true },
+                {typeof(MockCell), 5 }
+            }));
             // Act
             foreach (ICell cell in table)
             {
@@ -63,7 +71,11 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         public void IGenericCellsTable_GetCell_ReturnsRightTypeValue()
         {
             // Arrange
-            IGenericCellsTable table = InitializeTable(2, 2, "string", true, typeof(MockCell), 5);
+            IGenericCellsTable table = new SimpleTable(MockCellConstructor.ToArray(new object[,]
+            {
+                {"string", true },
+                {typeof(MockCell), 5 }
+            }));
             // Act
             var v1 = table.GetCell<string>(0, 0);
             var v2 = table.GetCell<bool>(0, 1);
@@ -80,7 +92,11 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         public void GenericCellsTable_GetCell_ReturnsNullForWrongTypeValue()
         {
             // Arrange
-            var table = InitializeTable(2, 2, "string", true, typeof(MockCell), 5);
+            var table = new SimpleTable(MockCellConstructor.ToArray(new object[,]
+            {
+                {"string", true },
+                {typeof(MockCell), 5 }
+            }));
             // Act
             table[1, 0] = new MockCell("string");
             table[0, 1] = new MockCell(typeof(MockCell));
@@ -104,19 +120,6 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
             Assert.Equal(rows, rowsCount);
             Assert.Equal(columns, columnsCount);
             Assert.Equal(rows * columns, length);
-        }
-
-        private SimpleTable InitializeTable(int dim1, int dim2, params object[] values)
-        {
-            var cells = new MockCell[dim1, dim2];
-            for (int i = 0, k = 0; i < dim1; i++)
-            {
-                for (int j = 0; j < dim2; j++, k++)
-                {
-                    cells[i, j] = new MockCell(values[k]);
-                }
-            }
-            return new SimpleTable(cells);
         }
     }
 }
