@@ -7,3 +7,7 @@
 // a specific target and scoped to a namespace, type, member, etc.
 
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Assertions", "xUnit2004:Do not use equality check to test for boolean conditions", Justification = "<Pending>", Scope = "member", Target = "~M:NSL.DataConversion.Core.Tests.Unit.Common.ITableTests`1.Indexer_GetWorks")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Assertions", "xUnit2003:Do not use equality check to test for null value", Justification = "<Pending>", Scope = "member", Target = "~M:NSL.DataConversion.Core.Tests.Unit.Common.IIntersectionTableTests`1.GetColumn_ReturnColumnEnumeration")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Assertions", "xUnit2004:Do not use equality check to test for boolean conditions", Justification = "<Pending>", Scope = "member", Target = "~M:NSL.DataConversion.Core.Tests.Unit.Common.IIntersectionTableTests`1.GetColumn_ReturnColumnEnumeration")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Assertions", "xUnit2003:Do not use equality check to test for null value", Justification = "<Pending>", Scope = "member", Target = "~M:NSL.DataConversion.Core.Tests.Unit.Common.IIntersectionTableTests`1.GetRow_ReturnRowEnumeration")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Assertions", "xUnit2004:Do not use equality check to test for boolean conditions", Justification = "<Pending>", Scope = "member", Target = "~M:NSL.DataConversion.Core.Tests.Unit.Common.IIntersectionTableTests`1.GetRow_ReturnRowEnumeration")]
