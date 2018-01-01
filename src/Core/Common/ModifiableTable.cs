@@ -48,16 +48,22 @@ namespace NSL.DataConversion.Core.Common
             set => _items[row][column] = value;
         }
 
-        public int RowsCount { get; }
-        public int ColumnsCount { get; }
-        public int Length { get; }
+        //todo: need ensure that table always is rectange
+
+        public int RowsCount => _items.Count;
+        public int ColumnsCount => _items.FirstOrDefault()?.Count ?? 0;
+        public int Length => RowsCount * ColumnsCount;
 
         public void AddColumn(IEnumerable<ICell> column)
         {
             if (column == null)
                 throw new ArgumentNullException(nameof(column));
 
-            _items.Add(column.ToList());
+            var columnlist = column as IList<ICell> ?? column.ToArray();
+            for (int i = 0; i < columnlist.Count; i++)
+            {
+                _items[i].Add(columnlist[i]);
+            }
         }
 
         public void AddRow(IEnumerable<ICell> row)
@@ -65,31 +71,18 @@ namespace NSL.DataConversion.Core.Common
             if (row == null)
                 throw new ArgumentNullException(nameof(row));
 
-            var rowlist = row as IList<ICell> ?? row.ToArray();
-            for (int i = 0; i < rowlist.Count; i++)
-            {
-                _items[i].Add(rowlist[i]);
-            }
-        }
-
-        public ICell<T> GetCell<T>(int row, int column)
-        {
-            throw new NotImplementedException();
+            //todo: ensure in legnth!!
+            _items.Add(row.ToList());
         }
 
         public IEnumerable<ICell> GetColumn(int index)
         {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerator<ICell> GetEnumerator()
-        {
-            throw new NotImplementedException();
+            return _items.Select(list => list[index]);
         }
 
         public IEnumerable<ICell> GetRow(int index)
         {
-            throw new NotImplementedException();
+            return _items[index].Select(x => x);
         }
 
         public void InsertColumn(int index, IEnumerable<ICell> column)
@@ -112,9 +105,15 @@ namespace NSL.DataConversion.Core.Common
             throw new NotImplementedException();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        ICell<T> IGenericCellsTable.GetCell<T>(int row, int column)
         {
-            throw new NotImplementedException();
+            if (this[row, column]?.Value is T t)
+                return new Cell<T>(t);
+            return null;
         }
+
+        IEnumerator<ICell> IEnumerable<ICell>.GetEnumerator() => _items.SelectMany(x => x).GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable<ICell>)this).GetEnumerator();
     }
 }
