@@ -49,6 +49,6 @@ namespace NSL.DataConversion.Core.Common
             return null;
         }
 
-        public override string ToString() => $"{nameof(ICell)}[{_items.GetLength(0)}, {_items.GetLength(1)}]";
+        public override string ToString() => $"Rows: {RowsCount}, Columns: {ColumnsCount}, Length: {Length}";
     }
 }

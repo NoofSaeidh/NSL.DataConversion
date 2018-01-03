@@ -3,7 +3,6 @@
 
 using NSL.DataConversion.Core.Common;
 using NSL.DataConversion.Core.Tests.Mocks;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +15,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
     public abstract class ITableTests<T> where T : ITable
     {
         [Fact]
+        [Trait("interface", nameof(ITable))]
         public virtual void Indexer_GetWorks()
         {
             // Arrange
@@ -37,6 +37,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         [Fact]
+        [Trait("interface", nameof(ITable))]
         public virtual void Indexer_SetWorks()
         {
             // Arrange
@@ -50,6 +51,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         [Fact]
+        [Trait("interface", nameof(ITable))]
         public virtual void GetEnumerator_Works()
         {
             // Arrange
@@ -68,6 +70,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
 
         [Theory]
         [InlineData(2, 3), InlineData(4, 5), InlineData(1, 1)]
+        [Trait("interface", nameof(ITable))]
         public virtual void RowsCount_ColumnsCount_Lenght_CountsRight(int rows, int columns)
         {
             // Arrange
@@ -84,90 +87,5 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         protected abstract T GetInstance(ICell[,] value);
-    }
-
-    public abstract class IGenericCellsTableTests<T> where T : IGenericCellsTable
-    {
-        [Fact]
-        public virtual void IGenericCellsTable_GetCell_ReturnsRightTypeValue()
-        {
-            // Arrange
-            IGenericCellsTable table = GetInstance(MockCellConstructor.ToArray(new object[,]
-            {
-                {"string", true },
-                {typeof(MockCell), 5 }
-            }));
-            // Act
-            var v1 = table.GetCell<string>(0, 0);
-            var v2 = table.GetCell<bool>(0, 1);
-            var v3 = table.GetCell<Type>(1, 0);
-            var v4 = table.GetCell<int>(1, 1);
-            // Assert
-            Assert.IsAssignableFrom<ICell<string>>(v1);
-            Assert.IsAssignableFrom<ICell<bool>>(v2);
-            Assert.IsAssignableFrom<ICell<Type>>(v3);
-            Assert.IsAssignableFrom<ICell<int>>(v4);
-        }
-
-        protected abstract T GetInstance(ICell[,] value);
-    }
-
-    public abstract class IIntersectionTableTests<T> : ITableTests<T> where T : IIntersectionTable
-    {
-        [Fact]
-        public virtual void GetColumn_ReturnColumnEnumeration()
-        {
-            // Arrange
-            object[,] array =
-            {
-                {"bool", null, typeof(IIntersectionTable) },
-                { 5, true, 'c' },
-            };
-            IIntersectionTable table = GetInstance(MockCellConstructor.ToArray(array));
-            // Act
-            var c0 = table.GetColumn(0);
-            var c1 = table.GetColumn(1);
-            var c2 = table.GetColumn(2);
-            // Assert
-            Assert.Collection(c0
-                , item => Assert.Equal("bool", item.Value)
-                , item => Assert.Equal(5, item.Value));
-            Assert.Collection(c1
-                , item => Assert.Equal(null, item.Value)
-                , item => Assert.Equal(true, item.Value));
-            Assert.Collection(c2
-                , item => Assert.Equal(typeof(IIntersectionTable), item.Value)
-                , item => Assert.Equal('c', item.Value));
-        }
-
-        [Fact]
-        public virtual void GetRow_ReturnRowEnumeration()
-        {
-            // Arrange
-            object[,] array =
-            {
-                {"bool", null},
-                { typeof(IIntersectionTable), 5 },
-                { true, 'c' },
-            }; IIntersectionTable table = GetInstance(MockCellConstructor.ToArray(array));
-            // Act
-            var c0 = table.GetRow(0);
-            var c1 = table.GetRow(1);
-            var c2 = table.GetRow(2);
-            // Assert
-            Assert.Collection(c0
-                , item => Assert.Equal("bool", item.Value)
-                , item => Assert.Equal(null, item.Value));
-            Assert.Collection(c1
-                , item => Assert.Equal(typeof(IIntersectionTable), item.Value)
-                , item => Assert.Equal(5, item.Value));
-            Assert.Collection(c2
-                , item => Assert.Equal(true, item.Value)
-                , item => Assert.Equal('c', item.Value));
-        }
-    }
-
-    public abstract class IModifiableTableTests<T> : IIntersectionTableTests<T> where T : IModifiableTable
-    {
     }
 }

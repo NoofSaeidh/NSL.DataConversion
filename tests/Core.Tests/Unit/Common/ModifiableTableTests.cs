@@ -12,9 +12,32 @@ using Xunit;
 
 namespace NSL.DataConversion.Core.Tests.Unit.Common
 {
+    [Trait("type", "interface")]
     public class ModifiableTableTests : IModifiableTableTests<ModifiableTable>
     {
         protected override ModifiableTable GetInstance(ICell[,] value) => new ModifiableTable(value);
+
+        [Fact]
+        public void Ctor_EmptyArray_Works()
+        {
+            // Arrange & Act
+            var table = new ModifiableTable(MockCellConstructor.ToArray(new object[0, 0]));
+            // Assert
+            Assert.Equal(0, table.Length);
+            Assert.Equal(0, table.RowsCount);
+            Assert.Equal(0, table.ColumnsCount);
+        }
+
+        [Fact]
+        public void Ctor_EmptyList_Works()
+        {
+            // Arrange & Act
+            var table = new ModifiableTable(MockCellConstructor.ToLists(new object[0, 0]));
+            // Assert
+            Assert.Equal(0, table.Length);
+            Assert.Equal(0, table.RowsCount);
+            Assert.Equal(0, table.ColumnsCount);
+        }
     }
 
     public class ModifiableTableTests_GenericCells : IGenericCellsTableTests<ModifiableTable>

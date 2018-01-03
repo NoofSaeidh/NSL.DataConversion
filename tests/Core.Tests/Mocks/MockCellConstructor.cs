@@ -26,6 +26,16 @@ namespace NSL.DataConversion.Core.Tests.Mocks
             return result;
         }
 
+        public static MockCell[] ToArray(params object[] values)
+        {
+            var result = new MockCell[values.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
+                result[i] = new MockCell(values[i]);
+            }
+            return result;
+        }
+
         public static List<List<MockCell>> ToLists(object[,] value)
         {
             var imax = value.GetLength(0);
@@ -40,6 +50,11 @@ namespace NSL.DataConversion.Core.Tests.Mocks
                 }
             }
             return result;
+        }
+
+        public static List<MockCell> ToList(params object[] values)
+        {
+            return values.Select(x => new MockCell(x)).ToList();
         }
     }
 }

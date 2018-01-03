@@ -18,6 +18,8 @@ namespace NSL.DataConversion.Core.Tests.Mocks
         }
 
         public object Value { get; }
+
+        public override string ToString() => Value?.ToString() ?? "null";
     }
 
     public class MockCell<T> : ICell<T>
