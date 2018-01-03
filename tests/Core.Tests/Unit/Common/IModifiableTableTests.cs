@@ -50,30 +50,32 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
             }
         }
 
-        [Fact]
+        [Theory]
+        [InlineData(0, 0), InlineData(1, 0), InlineData(0, 1), InlineData(3, 2)]
         [Trait("interface", nameof(IModifiableTable))]
-        public void AddRow_ExtendColumnsCount()
+        public void AddRow_ExtendColumnsCount(int initialRows, int initialColumns)
         {
             // Arrange
-            IModifiableTable table = GetInstance(MockCellConstructor.ToArray(new object[0, 0]));
-            var list = MockCellConstructor.ToList(new object[5]);
+            IModifiableTable table = GetInstance(MockCellConstructor.ToArray(new object[initialRows, initialColumns]));
+            var list = MockCellConstructor.ToList(new object[initialColumns + 1]);
             // Act
             table.AddRow(list);
             // Assert
-            Assert.Equal(5, table.ColumnsCount);
+            Assert.Equal(initialColumns + 1, table.ColumnsCount);
         }
 
-        [Fact]
+        [Theory]
+        [InlineData(0, 0), InlineData(1, 0), InlineData(0, 1), InlineData(3, 2)]
         [Trait("interface", nameof(IModifiableTable))]
-        public void AddColumn_ExtendRowsCount()
+        public void AddColumn_ExtendRowsCount(int initialRows, int initialColumns)
         {
             // Arrange
-            IModifiableTable table = GetInstance(MockCellConstructor.ToArray(new object[0, 0]));
-            var list = MockCellConstructor.ToList(new object[5]);
+            IModifiableTable table = GetInstance(MockCellConstructor.ToArray(new object[initialRows, initialColumns]));
+            var list = MockCellConstructor.ToList(new object[initialRows + 1]);
             // Act
             table.AddColumn(list);
             // Assert
-            Assert.Equal(5, table.RowsCount);
+            Assert.Equal(initialRows + 1, table.RowsCount);
         }
     }
 }
