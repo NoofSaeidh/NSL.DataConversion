@@ -12,7 +12,6 @@ using Xunit;
 
 namespace NSL.DataConversion.Core.Tests.Unit.Common
 {
-    [Trait("type", "interface")]
     public class ModifiableTableTests : IModifiableTableTests<ModifiableTable>
     {
         protected override ModifiableTable GetInstance(ICell[,] value) => new ModifiableTable(value);

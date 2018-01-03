@@ -7,7 +7,6 @@ using Xunit;
 
 namespace NSL.DataConversion.Core.Tests.Unit.Common
 {
-    [Trait("type", "interface")]
     public abstract class IModifiableTableTests<T> : IIntersectionTableTests<T> where T : IModifiableTable
     {
         [Theory]
