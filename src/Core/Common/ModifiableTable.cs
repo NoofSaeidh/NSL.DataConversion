@@ -127,7 +127,6 @@ namespace NSL.DataConversion.Core.Common
                 return;
             }
 
-            //todo: ensure in legnth!!
             _items.Add(row.ToList());
             ChangeRowsBy(+1);
             EnsureColumnsCount();

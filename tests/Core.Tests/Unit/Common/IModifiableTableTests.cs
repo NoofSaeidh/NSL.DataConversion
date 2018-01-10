@@ -14,7 +14,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         [InlineData(12, null)]
         [InlineData("string", true, null, 'a', 'b')]
         [Trait("interface", nameof(IModifiableTable))]
-        public void AddRow_Works(params object[] values)
+        public virtual void AddRow_Works(params object[] values)
         {
             // Arrange
             var empty = MockCellConstructor.ToArray(new object[0, values.Length]);
@@ -34,7 +34,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         [InlineData(12, null)]
         [InlineData("string", true, null, 'a', 'b')]
         [Trait("interface", nameof(IModifiableTable))]
-        public void AddColumn_Works(params object[] values)
+        public virtual void AddColumn_Works(params object[] values)
         {
             // Arrange
             var empty = MockCellConstructor.ToArray(new object[values.Length, 0]);
@@ -52,7 +52,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         [Theory]
         [InlineData(0, 0), InlineData(1, 0), InlineData(0, 1), InlineData(3, 2)]
         [Trait("interface", nameof(IModifiableTable))]
-        public void AddRow_ExtendColumnsCount(int initialRows, int initialColumns)
+        public virtual void AddRow_ExtendColumnsCount(int initialRows, int initialColumns)
         {
             // Arrange
             IModifiableTable table = GetInstance(MockCellConstructor.ToArray(new object[initialRows, initialColumns]));
@@ -66,7 +66,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         [Theory]
         [InlineData(0, 0), InlineData(1, 0), InlineData(0, 1), InlineData(3, 2)]
         [Trait("interface", nameof(IModifiableTable))]
-        public void AddColumn_ExtendRowsCount(int initialRows, int initialColumns)
+        public virtual void AddColumn_ExtendRowsCount(int initialRows, int initialColumns)
         {
             // Arrange
             IModifiableTable table = GetInstance(MockCellConstructor.ToArray(new object[initialRows, initialColumns]));
@@ -75,6 +75,52 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
             table.AddColumn(list);
             // Assert
             Assert.Equal(initialRows + 1, table.RowsCount);
+        }
+
+        [Fact]
+        [Trait("interface", nameof(IModifiableTable))]
+        public virtual void GetRow_Works()
+        {
+            // Arrange
+            object[,] array =
+            {
+                { null, null, null, null },
+                { "string", true, null, typeof(IModifiableTable) },
+                { null, null, null, null },
+                { null, null, null, null },
+            };
+            IModifiableTable table = GetInstance(MockCellConstructor.ToArray(array));
+            // Act
+            var result = table.GetRow(1);
+            // Assert
+            Assert.Collection(result
+                , item => Assert.Equal("string", item.Value)
+                , item => Assert.Equal(true, item.Value)
+                , item => Assert.Equal(null, item.Value)
+                , item => Assert.Equal(typeof(IModifiableTable), item.Value));
+        }
+
+        [Fact]
+        [Trait("interface", nameof(IModifiableTable))]
+        public virtual void GetColumn_Works()
+        {
+            // Arrange
+            object[,] array =
+            {
+                { null, "string", null, null },
+                { null, true, null, null },
+                { null, null, null, null },
+                { null, typeof(IModifiableTable), null, null },
+            };
+            IModifiableTable table = GetInstance(MockCellConstructor.ToArray(array));
+            // Act
+            var result = table.GetColumn(1);
+            // Assert
+            Assert.Collection(result
+                , item => Assert.Equal("string", item.Value)
+                , item => Assert.Equal(true, item.Value)
+                , item => Assert.Equal(null, item.Value)
+                , item => Assert.Equal(typeof(IModifiableTable), item.Value));
         }
     }
 }

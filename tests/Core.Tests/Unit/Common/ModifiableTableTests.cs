@@ -37,6 +37,28 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
             Assert.Equal(0, table.RowsCount);
             Assert.Equal(0, table.ColumnsCount);
         }
+
+        [Fact]
+        public void Ctor_Array_Works()
+        {
+            // Arrange & Act
+            var table = new ModifiableTable(MockCellConstructor.ToArray(new object[4, 5]));
+            // Assert
+            Assert.Equal(4 * 5, table.Length);
+            Assert.Equal(4, table.RowsCount);
+            Assert.Equal(5, table.ColumnsCount);
+        }
+
+        [Fact]
+        public void Ctor_List_Works()
+        {
+            // Arrange & Act
+            var table = new ModifiableTable(MockCellConstructor.ToLists(new object[4, 5]));
+            // Assert
+            Assert.Equal(4 * 5, table.Length);
+            Assert.Equal(4, table.RowsCount);
+            Assert.Equal(5, table.ColumnsCount);
+        }
     }
 
     public class ModifiableTableTests_GenericCells : IGenericCellsTableTests<ModifiableTable>
