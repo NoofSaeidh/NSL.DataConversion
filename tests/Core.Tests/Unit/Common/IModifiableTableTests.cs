@@ -122,5 +122,123 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
                 , item => Assert.Equal(null, item.Value)
                 , item => Assert.Equal(typeof(IModifiableTable), item.Value));
         }
+
+        [Fact]
+        [Trait("interface", nameof(IModifiableTable))]
+        public virtual void RemoveRow_Works()
+        {
+            // Arrange
+            object[,] array =
+            {
+                { null, null, null, null },
+                { "string", true, 5, typeof(IModifiableTable) },
+                { null, null, null, null },
+                { null, null, null, null },
+            };
+            IModifiableTable table = GetInstance(MockCellConstructor.ToArray(array));
+            // Act
+            table.RemoveRow(1);
+            var row = table.GetRow(1);
+            // Assert
+            Assert.Equal(3, table.RowsCount);
+            Assert.Collection(row
+                , item => Assert.NotEqual("string", item.Value)
+                , item => Assert.NotEqual(true, item.Value)
+                , item => Assert.NotEqual(5, item.Value)
+                , item => Assert.NotEqual(typeof(IModifiableTable), item.Value));
+        }
+
+        [Fact]
+        [Trait("interface", nameof(IModifiableTable))]
+        public virtual void RemoveColumn_Works()
+        {
+            // Arrange
+            object[,] array =
+            {
+                { null, "string", null, null },
+                { null, true, null, null },
+                { null, 5, null, null },
+                { null, typeof(IModifiableTable), null, null },
+            };
+            IModifiableTable table = GetInstance(MockCellConstructor.ToArray(array));
+            // Act
+            table.RemoveColumn(1);
+            var column = table.GetColumn(1);
+            // Assert
+            Assert.Equal(3, table.ColumnsCount);
+            Assert.Collection(column
+               , item => Assert.NotEqual("string", item.Value)
+               , item => Assert.NotEqual(true, item.Value)
+               , item => Assert.NotEqual(5, item.Value)
+               , item => Assert.NotEqual(typeof(IModifiableTable), item.Value));
+        }
+
+        [Theory]
+        [InlineData("string")]
+        [InlineData(12, null)]
+        [InlineData("string", true, null, 'a', 'b')]
+        [Trait("interface", nameof(IModifiableTable))]
+        public virtual void InsertRow_Works(params object[] values)
+        {
+            // Arrange
+            var empty = MockCellConstructor.ToArray(new object[4, values.Length]);
+            IModifiableTable table = GetInstance(empty);
+            // Act
+            table.InsertRow(1, MockCellConstructor.ToList(values));
+            // Assert
+            Assert.Equal(5, table.RowsCount);
+            for (int i = 0; i < values.Length; i++)
+            {
+                Assert.Equal(values[i], table[1, i].Value);
+            }
+        }
+
+        [Theory]
+        [InlineData("string")]
+        [InlineData(12, null)]
+        [InlineData("string", true, null, 'a', 'b')]
+        [Trait("interface", nameof(IModifiableTable))]
+        public virtual void InsertColumn_Works(params object[] values)
+        {
+            // Arrange
+            var empty = MockCellConstructor.ToArray(new object[values.Length, 4]);
+            IModifiableTable table = GetInstance(empty);
+            // Act
+            table.InsertColumn(1, MockCellConstructor.ToList(values));
+            // Assert
+            Assert.Equal(5, table.ColumnsCount);
+            for (int i = 0; i < values.Length; i++)
+            {
+                Assert.Equal(values[i], table[i, 1].Value);
+            }
+        }
+
+        [Theory]
+        [InlineData(1, 1), InlineData(3, 2)]
+        [Trait("interface", nameof(IModifiableTable))]
+        public virtual void InsertRow_ExtendColumnsCount(int initialRows, int initialColumns)
+        {
+            // Arrange
+            IModifiableTable table = GetInstance(MockCellConstructor.ToArray(new object[initialRows, initialColumns]));
+            var list = MockCellConstructor.ToList(new object[initialColumns + 1]);
+            // Act
+            table.InsertRow(initialRows - 1, list);
+            // Assert
+            Assert.Equal(initialColumns + 1, table.ColumnsCount);
+        }
+
+        [Theory]
+        [InlineData(1, 1), InlineData(3, 2)]
+        [Trait("interface", nameof(IModifiableTable))]
+        public virtual void InsertColumn_ExtendRowsCount(int initialRows, int initialColumns)
+        {
+            // Arrange
+            IModifiableTable table = GetInstance(MockCellConstructor.ToArray(new object[initialRows, initialColumns]));
+            var list = MockCellConstructor.ToList(new object[initialRows + 1]);
+            // Act
+            table.InsertColumn(initialColumns - 1, list);
+            // Assert
+            Assert.Equal(initialRows + 1, table.RowsCount);
+        }
     }
 }

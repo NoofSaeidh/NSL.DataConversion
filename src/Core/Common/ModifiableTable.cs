@@ -147,25 +147,45 @@ namespace NSL.DataConversion.Core.Common
         public void InsertColumn(int index, IEnumerable<ICell> column)
         {
             CheckColumnIndex(index, nameof(index));
-            throw new NotImplementedException();
+            var ar = column.ToArray();
+            if (ar.Length > _items.Count)
+            {
+                IncreaseRows(ar.Length);
+            }
+            for (int i = 0; i < _items.Count && i < ar.Length; i++)
+            {
+                _items[i].Insert(index, ar[i]);
+            }
+            for (int i = ar.Length; i < _items.Count; i++)
+            {
+                _items[i] = null;
+            }
+            ChangeColumnsBy(+1);
         }
 
         public void InsertRow(int index, IEnumerable<ICell> row)
         {
             CheckRowIndex(index, nameof(index));
-            throw new NotImplementedException();
+            _items.Insert(index, row.ToList());
+            EnsureColumnsCount();
+            ChangeRowsBy(+1);
         }
 
         public void RemoveColumn(int index)
         {
             CheckColumnIndex(index, nameof(index));
-            throw new NotImplementedException();
+            foreach (var item in _items)
+            {
+                item.RemoveAt(index);
+            }
+            ChangeColumnsBy(-1);
         }
 
         public void RemoveRow(int index)
         {
             CheckRowIndex(index, nameof(index));
-            throw new NotImplementedException();
+            _items.RemoveAt(index);
+            ChangeRowsBy(-1);
         }
 
         ICell<T> IGenericCellsTable.GetCell<T>(int row, int column)
