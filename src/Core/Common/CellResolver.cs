@@ -11,11 +11,15 @@ using System.Threading.Tasks;
 namespace NSL.DataConversion.Core.Common
 {
     public class CellResolver : ICellResolver
+        , IObjectResolver<ICell>, IGenericResolver<ICell>, IResolver<object, ICell>
+        , IResolver<object[,], ICell[,]>, IResolver<IEnumerable<IEnumerable<object>>, ICell[,]>
+        , IResolver<object[,], IList<IList<ICell>>>, IResolver<IEnumerable<IEnumerable<object>>, IList<IList<ICell>>>
     {
         private static readonly Lazy<CellResolver> lazy = new Lazy<CellResolver>();
 
-        public static CellResolver Instance => lazy.Value;
+        public static ICellResolver Instance => lazy.Value;
 
+        //todo: perhaps should redesign to have generic/nongeneric classes
         public virtual ICell<T> Resolve<T>(T value)
         {
             return new Cell<T>(value);
