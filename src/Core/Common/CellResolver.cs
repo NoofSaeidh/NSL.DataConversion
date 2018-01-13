@@ -14,7 +14,7 @@ namespace NSL.DataConversion.Core.Common
     {
         private static readonly Lazy<CellResolver> lazy = new Lazy<CellResolver>();
 
-        public static ICellResolver Instance => lazy.Value;
+        public static CellResolver Instance => lazy.Value;
 
         public virtual ICell<T> Resolve<T>(T value)
         {

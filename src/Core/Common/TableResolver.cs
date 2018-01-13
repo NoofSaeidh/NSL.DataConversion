@@ -13,7 +13,7 @@ namespace NSL.DataConversion.Core.Common
     {
         private static readonly Lazy<TableResolver> lazy = new Lazy<TableResolver>();
 
-        public static ITableResolver Instance => lazy.Value;
+        public static TableResolver Instance => lazy.Value;
 
         private readonly ICellResolver _cellResolver;
 
