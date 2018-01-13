@@ -15,7 +15,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
     public class TableResolverTests
     {
         [Fact]
-        public void ResolveReadOnlyTable_Array_Works()
+        public void ResolveTable_Array_Works()
         {
             // Arrange
             var table = new TableResolver(new MockCellResolver());
@@ -25,7 +25,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
                 { true, null}
             };
             // Act
-            var result = table.ResolveReadOnlyTable(array);
+            var result = table.ResolveTable(array);
             // Assert
             Assert.Equal(2, result.RowsCount);
             Assert.Equal(2, result.ColumnsCount);
@@ -37,7 +37,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
         }
 
         [Fact]
-        public void ResolveReadOnlyTable_Enumerable_Works()
+        public void ResolveTable_Enumerable_Works()
         {
             // Arrange
             var table = new TableResolver(new MockCellResolver());
@@ -47,7 +47,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
                 new List<object> { true, null}
             };
             // Act
-            var result = table.ResolveReadOnlyTable(list);
+            var result = table.ResolveTable(list);
             // Assert
             Assert.Equal(2, result.RowsCount);
             Assert.Equal(2, result.ColumnsCount);

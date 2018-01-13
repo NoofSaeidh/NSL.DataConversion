@@ -139,16 +139,16 @@ namespace NSL.DataConversion.Core.Common
         IList<IList<ICell>> ResolveToList(object[,] value);
     }
 
-    public interface ITableResolver : IResolver<object[,], IReadOnlyTable>, IResolver<IEnumerable<IEnumerable<object>>, IReadOnlyTable>
+    public interface ITableResolver : IResolver<object[,], ITable>, IResolver<IEnumerable<IEnumerable<object>>, ITable>
         , IResolver<object[,], IModifiableTable>, IResolver<IEnumerable<IEnumerable<object>>, IModifiableTable>
     {
         IModifiableTable ResolveModifiableTable(IEnumerable<IEnumerable<object>> value);
 
         IModifiableTable ResolveModifiableTable(object[,] value);
 
-        IReadOnlyTable ResolveReadOnlyTable(IEnumerable<IEnumerable<object>> value);
+        ITable ResolveTable(IEnumerable<IEnumerable<object>> value);
 
-        IReadOnlyTable ResolveReadOnlyTable(object[,] value);
+        ITable ResolveTable(object[,] value);
     }
 
     #endregion

@@ -37,19 +37,19 @@ namespace NSL.DataConversion.Core.Common
             return new ModifiableTable(_cellResolver.ResolveToArray(value));
         }
 
-        public IReadOnlyTable ResolveReadOnlyTable(IEnumerable<IEnumerable<object>> value)
+        public ITable ResolveTable(IEnumerable<IEnumerable<object>> value)
         {
             return new SimpleTable(_cellResolver.ResolveToArray(value));
         }
 
-        public IReadOnlyTable ResolveReadOnlyTable(object[,] value)
+        public ITable ResolveTable(object[,] value)
         {
             return new SimpleTable(_cellResolver.ResolveToArray(value));
         }
 
-        IReadOnlyTable IResolver<object[,], IReadOnlyTable>.Resolve(object[,] value) => ResolveReadOnlyTable(value);
+        ITable IResolver<object[,], ITable>.Resolve(object[,] value) => ResolveTable(value);
 
-        IReadOnlyTable IResolver<IEnumerable<IEnumerable<object>>, IReadOnlyTable>.Resolve(IEnumerable<IEnumerable<object>> value) => ResolveReadOnlyTable(value);
+        ITable IResolver<IEnumerable<IEnumerable<object>>, ITable>.Resolve(IEnumerable<IEnumerable<object>> value) => ResolveTable(value);
 
         IModifiableTable IResolver<object[,], IModifiableTable>.Resolve(object[,] value) => ResolveModifiableTable(value);
 
