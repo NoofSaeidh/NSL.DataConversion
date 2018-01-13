@@ -91,7 +91,6 @@ namespace NSL.DataConversion.Core.Common
 
     public interface IDataList : IData
     {
-        new ITable this[int index] { get; set; }
         new ITable this[string key] { get; set; }
 
         void Add(string key, ITable table);

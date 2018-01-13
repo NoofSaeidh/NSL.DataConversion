@@ -14,21 +14,18 @@ namespace NSL.DataConversion.Core.Common
     {
         private readonly Dictionary<string, ITable> _items;
 
+        //todo: string comparation constructors
         public Data()
         {
             _items = new Dictionary<string, ITable>();
         }
 
-        public Data(Dictionary<string, ITable> items)
+        public Data(IDictionary<string, ITable> items)
         {
-            _items = items ?? throw new ArgumentNullException(nameof(items));
+            _items = new Dictionary<string, ITable>(items ?? throw new ArgumentNullException(nameof(items)));
         }
 
-        public ITable this[int index]
-        {
-            get => _items.ElementAt(index).Value;
-            set => _items[_items.ElementAt(index).Key] = value;
-        }
+        public ITable this[int index] => _items.ElementAt(index).Value;
 
         public ITable this[string key]
         {
