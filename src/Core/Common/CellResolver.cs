@@ -11,9 +11,6 @@ using System.Threading.Tasks;
 namespace NSL.DataConversion.Core.Common
 {
     public class CellResolver : ICellResolver
-        , IObjectResolver<ICell>, IGenericResolver<ICell>, IResolver<object, ICell>
-        , IResolver<object[,], ICell[,]>, IResolver<IEnumerable<IEnumerable<object>>, ICell[,]>
-        , IResolver<object[,], IList<IList<ICell>>>, IResolver<IEnumerable<IEnumerable<object>>, IList<IList<ICell>>>
     {
         private static readonly Lazy<CellResolver> lazy = new Lazy<CellResolver>();
 
