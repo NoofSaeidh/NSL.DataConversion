@@ -104,7 +104,7 @@ namespace NSL.DataConversion.Core.Tests.Unit.Common
 
         [Theory]
         [InlineData(5), InlineData("string"), InlineData(typeof(Cell))]
-        public void Value_EqualToBaseClassValue(object value)
+        public void Value_EqualsToBaseClassValue(object value)
         {
             // Arrange
             var cell = new Cell<object>(value);
