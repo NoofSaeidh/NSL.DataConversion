@@ -33,7 +33,7 @@ namespace NSL.DataConversion.Core.Excel
         {
             get
             {
-                if (_value != null || OriginalValue == null)
+                if (_newValue != null || _value == null)
                     return _value;
 
                 switch (CellType)
