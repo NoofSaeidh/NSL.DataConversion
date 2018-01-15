@@ -9,22 +9,31 @@ using System.Threading.Tasks;
 
 namespace NSL.DataConversion.Core.Common
 {
-    public class Cell : ICell, ICell<object>, IEquatable<Cell>
+    public class Cell : ICell, ICell<object>, IEquatable<Cell>, IEquatable<ICell>
     {
+        protected readonly object _value;
+
         public Cell(object value)
         {
-            Value = value;
+            _value = value;
         }
 
-        public object Value { get; }
+        public virtual object Value => _value;
 
         public bool Equals(Cell other)
         {
             if (other == null) return false;
 
-            if (Value == other?.Value)
+            if (Value == other.Value)
                 return true;
 
+            return false;
+        }
+
+        public virtual bool Equals(ICell other)
+        {
+            if (other is Cell c)
+                return Equals(c);
             return false;
         }
 
@@ -55,6 +64,16 @@ namespace NSL.DataConversion.Core.Common
         public bool Equals(Cell<T> other)
         {
             return base.Equals(other);
+        }
+
+        public override bool Equals(ICell cell)
+        {
+            var result = base.Equals(cell);
+            if (!result)
+                return false;
+            if (cell.GetType() == GetType())
+                return true;
+            return false;
         }
 
         public static implicit operator Cell<T>(T value) => new Cell<T>(value);

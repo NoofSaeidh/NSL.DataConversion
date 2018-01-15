@@ -10,18 +10,16 @@ using System.Threading.Tasks;
 
 namespace NSL.DataConversion.Core.Excel
 {
-    public class ExcelCell : ICell, IEquatable<ExcelCell>
+    public class ExcelCell : Cell, ICell, IEquatable<ExcelCell>
     {
-        private object _value;
+        private object _newValue;
 
-        public ExcelCell(object value)
+        public ExcelCell(object value) : base(value)
         {
-            OriginalValue = value;
         }
 
-        public ExcelCell(object value, ExcelCellType cellType, string format = null)
+        public ExcelCell(object value, ExcelCellType cellType, string format = null) : base(value)
         {
-            OriginalValue = value;
             CellType = cellType;
             Format = format;
         }
@@ -31,7 +29,7 @@ namespace NSL.DataConversion.Core.Excel
             return new ExcelCell(dateTimeValue, ExcelCellType.DateTime, dateTimeFormat);
         }
 
-        public virtual object Value
+        public override object Value
         {
             get
             {
@@ -41,14 +39,14 @@ namespace NSL.DataConversion.Core.Excel
                 switch (CellType)
                 {
                     case ExcelCellType.General:
-                        return _value = OriginalValue;
+                        return _newValue = OriginalValue;
 
                     case ExcelCellType.DateTime:
                         // handle datetime as datetime
                         var code = Convert.GetTypeCode(OriginalValue);
                         if (code == TypeCode.DateTime)
                         {
-                            return _value = Convert.ToDateTime(OriginalValue);
+                            return _newValue = Convert.ToDateTime(OriginalValue);
                         }
 
                         // handle datetime as decimal (OADate)
@@ -62,10 +60,10 @@ namespace NSL.DataConversion.Core.Excel
                             || code == TypeCode.UInt64)
                         {
                             var dt = Convert.ToDouble(OriginalValue);
-                            return _value = DateTime.FromOADate(dt);
+                            return _newValue = DateTime.FromOADate(dt);
                         }
 
-                        return _value = OriginalValue;
+                        return _newValue = OriginalValue;
 
                     default:
                         throw new NotImplementedException();
@@ -73,7 +71,7 @@ namespace NSL.DataConversion.Core.Excel
             }
         }
 
-        public object OriginalValue { get; }
+        public object OriginalValue => _value;
         public string Format { get; }
         public ExcelCellType CellType { get; }
 
