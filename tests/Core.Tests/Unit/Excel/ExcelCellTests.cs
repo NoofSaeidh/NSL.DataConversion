@@ -1,0 +1,21 @@
+﻿// This file is licensed under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using NSL.DataConversion.Core.Excel;
+using NSL.DataConversion.Core.Tests.Unit.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace NSL.DataConversion.Core.Tests.Unit.Excel
+{
+    public class ExcelCellTests : ICellTests<ExcelCell>
+    {
+        protected override ExcelCell GetInstance(object value)
+        {
+            return new ExcelCell(value);
+        }
+    }
+}
