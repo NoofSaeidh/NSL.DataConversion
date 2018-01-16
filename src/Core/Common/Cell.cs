@@ -32,9 +32,7 @@ namespace NSL.DataConversion.Core.Common
 
         public virtual bool Equals(ICell other)
         {
-            if (other is Cell c)
-                return Equals(c);
-            return false;
+            return Equals((object)other);
         }
 
         public override bool Equals(object obj)
