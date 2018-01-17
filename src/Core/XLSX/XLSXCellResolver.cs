@@ -1,17 +1,16 @@
 ﻿// This file is licensed under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using NSL.DataConversion.Core.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NSL.DataConversion.Core.Excel
+namespace NSL.DataConversion.Core.XLSX
 {
-    public enum ExcelCellType
+    public class XLSXCellResolver : CellResolver
     {
-        General,
-        DateTime
     }
 }

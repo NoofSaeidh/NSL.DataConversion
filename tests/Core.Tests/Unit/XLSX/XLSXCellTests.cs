@@ -1,7 +1,7 @@
 ﻿// This file is licensed under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using NSL.DataConversion.Core.Excel;
+using NSL.DataConversion.Core.XLSX;
 using NSL.DataConversion.Core.Tests.Unit.Common;
 using System;
 using System.Collections.Generic;
@@ -10,24 +10,27 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace NSL.DataConversion.Core.Tests.Unit.Excel
+namespace NSL.DataConversion.Core.Tests.Unit.XLSX
 {
-    public class ExcelCellTests : ICellTests<ExcelCell>
+    public class XLSXCellTests : ICellTests<XLSXCell>
     {
-        protected override ExcelCell GetInstance(object value)
+        protected override XLSXCell GetInstance(object value)
         {
-            return new ExcelCell(value);
+            return new XLSXCell(value);
         }
 
         [Theory]
         [InlineData(214521), InlineData(12344.123412), InlineData(-53623.43123)]
         [InlineData(1231.4231, TypeCode.Decimal), InlineData(34675, TypeCode.UInt32)]
-        public void Value_DateTime_ConvertedFromOADate(IConvertible doubleConvertible, TypeCode? type = null)
+        public void Value_DateTime_ConvertedFromOADate(IConvertible input, TypeCode? type = null)
         {
             // Arrange
-            var cell = new ExcelCell(doubleConvertible, ExcelCellType.DateTime);
-            var dbl = Convert.ToDouble(doubleConvertible);
+            var dbl = Convert.ToDouble(input);
             var datetime = DateTime.FromOADate(dbl);
+
+            var value = type == null ? input : Convert.ChangeType(input, type.Value);
+            var cell = new XLSXCell(value, XLSXCellType.DateTime);
+
             // Act
             var result = cell.Value;
             // Assert
