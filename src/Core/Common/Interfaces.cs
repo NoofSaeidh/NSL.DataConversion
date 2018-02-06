@@ -123,9 +123,13 @@ namespace NSL.DataConversion.Core.Common
         T ResolveGeneric<U>(U value);
     }
 
-    public interface ICellResolver : IObjectResolver<ICell>, IGenericResolver<ICell>, IResolver<object, ICell>
-        , IResolver<object[,], ICell[,]>, IResolver<IEnumerable<IEnumerable<object>>, ICell[,]>
-        , IResolver<object[,], IList<IList<ICell>>>, IResolver<IEnumerable<IEnumerable<object>>, IList<IList<ICell>>>
+    public interface ICellResolver : IObjectResolver<ICell>
+        , IGenericResolver<ICell>
+        , IResolver<object, ICell>
+        , IResolver<object[,], ICell[,]>
+        , IResolver<IEnumerable<IEnumerable<object>>, ICell[,]>
+        , IResolver<object[,], IList<IList<ICell>>>
+        , IResolver<IEnumerable<IEnumerable<object>>, IList<IList<ICell>>>
     {
         ICell<T> Resolve<T>(T value);
 
