@@ -12,6 +12,10 @@ namespace NSL.DataConversion.Core.XLSX
 {
     public class XLSXCellResolver : CellResolver, IXLSXCellResolver
     {
+        private static readonly Lazy<XLSXCellResolver> lazy = new Lazy<XLSXCellResolver>();
+
+        public new static XLSXCellResolver Instance => lazy.Value;
+
         public virtual IXLSXCell Resolve(object value)
         {
             return new XLSXCell(value);
