@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace NSL.DataConversion.Core.XLSX
 {
-    public class XLSXCell : Cell, ICell, IEquatable<XLSXCell>
+    public class XLSXCell : Cell, ICell, IXLSXCell, IEquatable<XLSXCell>
     {
         private object _newValue;
 
