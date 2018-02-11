@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NSL.DataConversion.Core.XLSX
+namespace NSL.DataConversion.Core.Xlsx
 {
-    public enum XLSXCellType
+    public enum XlsxCellType
     {
         General,
         DateTime

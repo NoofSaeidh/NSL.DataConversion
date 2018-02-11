@@ -8,26 +8,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NSL.DataConversion.Core.XLSX
+namespace NSL.DataConversion.Core.Xlsx
 {
-    public class XLSXCellResolver : CellResolver, IXLSXCellResolver
+    public class XlsxCellResolver : CellResolver, IXlsxCellResolver
     {
-        private static readonly Lazy<XLSXCellResolver> lazy = new Lazy<XLSXCellResolver>();
+        private static readonly Lazy<XlsxCellResolver> lazy = new Lazy<XlsxCellResolver>();
 
-        public new static XLSXCellResolver Instance => lazy.Value;
+        public new static XlsxCellResolver Instance => lazy.Value;
 
-        public virtual IXLSXCell Resolve(object value)
+        public virtual IXlsxCell Resolve(object value)
         {
-            return new XLSXCell(value);
+            return new XlsxCell(value);
         }
 
-        public new virtual IXLSXCell ResolveObject(object value) => Resolve(value);
+        public new virtual IXlsxCell ResolveObject(object value) => Resolve(value);
 
-        public new virtual IXLSXCell[,] ResolveToArray(object[,] value)
+        public new virtual IXlsxCell[,] ResolveToArray(object[,] value)
         {
             var imax = value.GetLength(0);
             var jmax = value.GetLength(1);
-            var result = new IXLSXCell[imax, jmax];
+            var result = new IXlsxCell[imax, jmax];
             for (int i = 0; i < imax; i++)
             {
                 for (int j = 0; j < jmax; j++)
@@ -38,11 +38,11 @@ namespace NSL.DataConversion.Core.XLSX
             return result;
         }
 
-        public new virtual IXLSXCell[,] ResolveToArray(IEnumerable<IEnumerable<object>> value)
+        public new virtual IXlsxCell[,] ResolveToArray(IEnumerable<IEnumerable<object>> value)
         {
             var array = value.Select(x => x.ToArray()).ToArray();
             var jmax = array.Max(x => x.Length);
-            var result = new IXLSXCell[array.Length, jmax];
+            var result = new IXlsxCell[array.Length, jmax];
             for (int i = 0; i < array.Length; i++)
             {
                 for (int j = 0; j < array[i].Length; j++)
@@ -57,14 +57,14 @@ namespace NSL.DataConversion.Core.XLSX
             return result;
         }
 
-        public new virtual IList<IList<IXLSXCell>> ResolveToList(object[,] value)
+        public new virtual IList<IList<IXlsxCell>> ResolveToList(object[,] value)
         {
             var imax = value.GetLength(0);
             var jmax = value.GetLength(1);
-            var result = new List<IList<IXLSXCell>>(imax);
+            var result = new List<IList<IXlsxCell>>(imax);
             for (int i = 0; i < imax; i++)
             {
-                result.Add(new List<IXLSXCell>(jmax));
+                result.Add(new List<IXlsxCell>(jmax));
                 for (int j = 0; j < jmax; j++)
                 {
                     result[i].Add(ResolveObject(value[i, j]));
@@ -73,9 +73,9 @@ namespace NSL.DataConversion.Core.XLSX
             return result;
         }
 
-        public new virtual IList<IList<IXLSXCell>> ResolveToList(IEnumerable<IEnumerable<object>> value)
+        public new virtual IList<IList<IXlsxCell>> ResolveToList(IEnumerable<IEnumerable<object>> value)
         {
-            var result = value.Select(x => (IList<IXLSXCell>)x.Select(item => ResolveObject(item)).ToList()).ToList();
+            var result = value.Select(x => (IList<IXlsxCell>)x.Select(item => ResolveObject(item)).ToList()).ToList();
             var max = result.Max(x => x.Count);
             foreach (var item in result)
             {
@@ -87,8 +87,8 @@ namespace NSL.DataConversion.Core.XLSX
             return result;
         }
 
-        IXLSXCell[,] IResolver<object[,], IXLSXCell[,]>.Resolve(object[,] value) => ResolveToArray(value);
+        IXlsxCell[,] IResolver<object[,], IXlsxCell[,]>.Resolve(object[,] value) => ResolveToArray(value);
 
-        IEnumerable<IEnumerable<IXLSXCell>> IResolver<IEnumerable<IEnumerable<object>>, IEnumerable<IEnumerable<IXLSXCell>>>.Resolve(IEnumerable<IEnumerable<object>> value) => ResolveToList(value);
+        IEnumerable<IEnumerable<IXlsxCell>> IResolver<IEnumerable<IEnumerable<object>>, IEnumerable<IEnumerable<IXlsxCell>>>.Resolve(IEnumerable<IEnumerable<object>> value) => ResolveToList(value);
     }
 }

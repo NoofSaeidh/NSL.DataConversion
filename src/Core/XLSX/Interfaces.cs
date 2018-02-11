@@ -8,27 +8,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NSL.DataConversion.Core.XLSX
+namespace NSL.DataConversion.Core.Xlsx
 {
-    public interface IXLSXCell : ICell
+    public interface IXlsxCell : ICell
     {
         string Format { get; }
-        XLSXCellType CellType { get; }
+        XlsxCellType CellType { get; }
         object OriginalValue { get; }
     }
 
-    public interface IXLSXCellResolver : ICellResolver
-        , IObjectResolver<IXLSXCell>
-        , IResolver<object, IXLSXCell>
-        , IResolver<object[,], IXLSXCell[,]>
-        , IResolver<IEnumerable<IEnumerable<object>>, IEnumerable<IEnumerable<IXLSXCell>>>
+    public interface IXlsxCellResolver : ICellResolver
+        , IObjectResolver<IXlsxCell>
+        , IResolver<object, IXlsxCell>
+        , IResolver<object[,], IXlsxCell[,]>
+        , IResolver<IEnumerable<IEnumerable<object>>, IEnumerable<IEnumerable<IXlsxCell>>>
     {
-        new IXLSXCell[,] ResolveToArray(IEnumerable<IEnumerable<object>> value);
+        new IXlsxCell[,] ResolveToArray(IEnumerable<IEnumerable<object>> value);
 
-        new IXLSXCell[,] ResolveToArray(object[,] value);
+        new IXlsxCell[,] ResolveToArray(object[,] value);
 
-        new IList<IList<IXLSXCell>> ResolveToList(IEnumerable<IEnumerable<object>> value);
+        new IList<IList<IXlsxCell>> ResolveToList(IEnumerable<IEnumerable<object>> value);
 
-        new IList<IList<IXLSXCell>> ResolveToList(object[,] value);
+        new IList<IList<IXlsxCell>> ResolveToList(object[,] value);
     }
 }

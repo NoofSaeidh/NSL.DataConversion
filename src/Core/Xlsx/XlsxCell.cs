@@ -8,25 +8,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NSL.DataConversion.Core.XLSX
+namespace NSL.DataConversion.Core.Xlsx
 {
-    public class XLSXCell : Cell, ICell, IXLSXCell, IEquatable<XLSXCell>
+    public class XlsxCell : Cell, ICell, IXlsxCell, IEquatable<XlsxCell>
     {
         private object _newValue;
 
-        public XLSXCell(object value) : base(value)
+        public XlsxCell(object value) : base(value)
         {
         }
 
-        public XLSXCell(object value, XLSXCellType cellType, string format = null) : base(value)
+        public XlsxCell(object value, XlsxCellType cellType, string format = null) : base(value)
         {
             CellType = cellType;
             Format = format;
         }
 
-        public static XLSXCell DateTimeCell(object dateTimeValue, string dateTimeFormat = null)
+        public static XlsxCell DateTimeCell(object dateTimeValue, string dateTimeFormat = null)
         {
-            return new XLSXCell(dateTimeValue, XLSXCellType.DateTime, dateTimeFormat);
+            return new XlsxCell(dateTimeValue, XlsxCellType.DateTime, dateTimeFormat);
         }
 
         public override object Value
@@ -38,10 +38,10 @@ namespace NSL.DataConversion.Core.XLSX
 
                 switch (CellType)
                 {
-                    case XLSXCellType.General:
+                    case XlsxCellType.General:
                         return _newValue = OriginalValue;
 
-                    case XLSXCellType.DateTime:
+                    case XlsxCellType.DateTime:
                         // handle datetime as datetime
                         var code = Convert.GetTypeCode(OriginalValue);
                         if (code == TypeCode.DateTime)
@@ -73,9 +73,9 @@ namespace NSL.DataConversion.Core.XLSX
 
         public object OriginalValue => _value;
         public string Format { get; }
-        public XLSXCellType CellType { get; }
+        public XlsxCellType CellType { get; }
 
-        public bool Equals(XLSXCell other)
+        public bool Equals(XlsxCell other)
         {
             if (other == null) return false;
 
@@ -89,7 +89,7 @@ namespace NSL.DataConversion.Core.XLSX
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as XLSXCell);
+            return Equals(obj as XlsxCell);
         }
 
         public override int GetHashCode()
