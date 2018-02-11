@@ -4,6 +4,7 @@
 using NSL.DataConversion.Core.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace NSL.DataConversion.Core.Xlsx
 {
     public class XlsxCell : Cell, ICell, IXlsxCell, IEquatable<XlsxCell>
     {
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private object _newValue;
 
         public XlsxCell(object value) : base(value)
@@ -71,7 +73,9 @@ namespace NSL.DataConversion.Core.Xlsx
             }
         }
 
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public object OriginalValue => _value;
+
         public string Format { get; }
         public XlsxCellType CellType { get; }
 

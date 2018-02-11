@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace NSL.DataConversion.Core.Common
 {
     public class Cell : ICell, ICell<object>, IEquatable<Cell>, IEquatable<ICell>
     {
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         protected readonly object _value;
 
         public Cell(object value)
@@ -57,6 +59,7 @@ namespace NSL.DataConversion.Core.Common
         {
         }
 
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         new public T Value => (T)base.Value;
 
         public bool Equals(Cell<T> other)
