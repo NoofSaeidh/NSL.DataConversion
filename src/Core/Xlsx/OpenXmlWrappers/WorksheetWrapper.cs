@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NSL.DataConversion.Core.Xlsx
+namespace NSL.DataConversion.Core.Xlsx.OpenXmlWrappers
 {
     public class WorksheetWrapper
     {

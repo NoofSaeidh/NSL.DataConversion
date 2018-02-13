@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NSL.DataConversion.Core.Xlsx
+namespace NSL.DataConversion.Core.Xlsx.OpenXmlWrappers
 {
     //todo: what happens if file changed?
     public class XlsxReader : IDisposable
