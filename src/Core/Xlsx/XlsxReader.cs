@@ -46,19 +46,15 @@ namespace NSL.DataConversion.Core.Xlsx
             {
                 if (_worksheets != null) return _worksheets;
 
-                _document.WorkbookPart.WorksheetParts.ToDictionary(
-                    k => _document
-                            .WorkbookPart
-                            .Workbook
-                            .Sheets
-                            .Elements<Sheet>()
-                            .Select(sheet => sheet.Name)
-                    , v => v.Worksheet);
+                var result = new List<KeyValuePair<string, WorksheetWrapper>>();
 
-                var res = GetNamedWorksheets(_document.WorkbookPart);
+                foreach (Sheet sheet in _document.WorkbookPart.Workbook.Sheets)
+                {
+                    var item = (WorksheetPart)_document.WorkbookPart.GetPartById(sheet.Id);
+                    result.Add(new KeyValuePair<string, WorksheetWrapper>(sheet.Name, new WorksheetWrapper(item)));
+                }
 
-                return _worksheets = res.ToDictionary(k => k.Key
-                , v => new WorksheetWrapper(v.Value.WorksheetPart));
+                return _worksheets = new Dictionary<string, WorksheetWrapper>(result);
             }
         }
 
@@ -66,7 +62,7 @@ namespace NSL.DataConversion.Core.Xlsx
         {
             if (_disposed) return;
             _document.Dispose();
-            if(_tempFile != null)
+            if (_tempFile != null)
             {
                 try
                 {
@@ -80,15 +76,6 @@ namespace NSL.DataConversion.Core.Xlsx
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
             _disposed = true;
-        }
-
-        public static IEnumerable<KeyValuePair<string, Worksheet>> GetNamedWorksheets
-            (WorkbookPart workbookPart)
-        {
-            return workbookPart.Workbook.Sheets.Elements<Sheet>()
-                .Select(sheet => new KeyValuePair<string, Worksheet>
-                    (sheet.Name
-                    , ((WorksheetPart)workbookPart.GetPartById(sheet.Id)).Worksheet));
         }
 
         //Open copy insted of real file
