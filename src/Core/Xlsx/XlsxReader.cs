@@ -51,7 +51,8 @@ namespace NSL.DataConversion.Core.Xlsx
                 foreach (Sheet sheet in _document.WorkbookPart.Workbook.Sheets)
                 {
                     var item = (WorksheetPart)_document.WorkbookPart.GetPartById(sheet.Id);
-                    result.Add(new KeyValuePair<string, WorksheetWrapper>(sheet.Name, new WorksheetWrapper(item)));
+                    result.Add(new KeyValuePair<string, WorksheetWrapper>(sheet.Name
+                        , new WorksheetWrapper(item.Worksheet, _document.WorkbookPart.SharedStringTablePart.SharedStringTable)));
                 }
 
                 return _worksheets = new Dictionary<string, WorksheetWrapper>(result);
