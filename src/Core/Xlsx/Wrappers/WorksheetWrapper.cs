@@ -9,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NSL.DataConversion.Core.Xlsx.OpenXmlWrappers
+namespace NSL.DataConversion.Core.Xlsx.Wrappers
 {
-    public class WorksheetWrapper
+    public class WorksheetWrapper : IWorksheetWrapper
     {
         private readonly Worksheet _worksheet;
         private readonly SharedStringTable _sharedTable;
@@ -28,7 +28,7 @@ namespace NSL.DataConversion.Core.Xlsx.OpenXmlWrappers
         public int RowsCount => _rowsCount ?? (_rowsCount = _worksheet.Descendants<Row>().Count()).Value;
         public int CellsCount => _cellsCount ?? (_cellsCount = _worksheet.Descendants<Cell>().Count()).Value;
 
-        public CellWrapper[][] Items
+        public ICellWrapper[][] Cells
         {
             get
             {

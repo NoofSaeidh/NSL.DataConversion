@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NSL.DataConversion.Core.Xlsx.OpenXmlWrappers
+namespace NSL.DataConversion.Core.Xlsx.Wrappers
 {
-    public class CellWrapper
+    public class CellWrapper : ICellWrapper
     {
         private readonly Cell _cell;
         private readonly string _sharedString;

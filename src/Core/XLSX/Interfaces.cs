@@ -2,6 +2,7 @@
 // See the LICENSE file in the project root for more information.
 
 using NSL.DataConversion.Core.Common;
+using NSL.DataConversion.Core.Xlsx.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace NSL.DataConversion.Core.Xlsx
         , IResolver<object, IXlsxCell>
         , IResolver<object[,], IXlsxCell[,]>
         , IResolver<IEnumerable<IEnumerable<object>>, IEnumerable<IEnumerable<IXlsxCell>>>
+        , IResolver<ICellWrapper, IXlsxCell>
+        , IResolver<ICellWrapper[,], IXlsxCell[,]>
     {
         new IXlsxCell[,] ResolveToArray(IEnumerable<IEnumerable<object>> value);
 

@@ -12,13 +12,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NSL.DataConversion.Core.Xlsx.OpenXmlWrappers
+namespace NSL.DataConversion.Core.Xlsx.Wrappers
 {
     //todo: what happens if file changed?
-    public class XlsxReader : IDisposable
+    public class XlsxReader : IWorkbookWrapper, IDisposable
     {
         private readonly SpreadsheetDocument _document;
-        private Dictionary<string, WorksheetWrapper> _worksheets;
+        private Dictionary<string, IWorksheetWrapper> _worksheets;
         private readonly string _tempFile;
         private bool _disposed;
 
@@ -40,22 +40,22 @@ namespace NSL.DataConversion.Core.Xlsx.OpenXmlWrappers
             _tempFile = deleteOnDispose ? path : null;
         }
 
-        public Dictionary<string, WorksheetWrapper> Worksheets
+        public Dictionary<string, IWorksheetWrapper> Worksheets
         {
             get
             {
                 if (_worksheets != null) return _worksheets;
 
-                var result = new List<KeyValuePair<string, WorksheetWrapper>>();
+                var result = new List<KeyValuePair<string, IWorksheetWrapper>>();
 
                 foreach (Sheet sheet in _document.WorkbookPart.Workbook.Sheets)
                 {
                     var item = (WorksheetPart)_document.WorkbookPart.GetPartById(sheet.Id);
-                    result.Add(new KeyValuePair<string, WorksheetWrapper>(sheet.Name
+                    result.Add(new KeyValuePair<string, IWorksheetWrapper>(sheet.Name
                         , new WorksheetWrapper(item.Worksheet, _document.WorkbookPart.SharedStringTablePart.SharedStringTable)));
                 }
 
-                return _worksheets = new Dictionary<string, WorksheetWrapper>(result);
+                return _worksheets = new Dictionary<string, IWorksheetWrapper>(result);
             }
         }
 

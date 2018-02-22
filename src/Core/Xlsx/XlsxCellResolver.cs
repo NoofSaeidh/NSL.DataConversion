@@ -2,6 +2,7 @@
 // See the LICENSE file in the project root for more information.
 
 using NSL.DataConversion.Core.Common;
+using NSL.DataConversion.Core.Xlsx.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,6 +86,16 @@ namespace NSL.DataConversion.Core.Xlsx
                 }
             }
             return result;
+        }
+
+        public virtual IXlsxCell Resolve(ICellWrapper value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual IXlsxCell[,] Resolve(ICellWrapper[,] value)
+        {
+            throw new NotImplementedException();
         }
 
         IXlsxCell[,] IResolver<object[,], IXlsxCell[,]>.Resolve(object[,] value) => ResolveToArray(value);
