@@ -82,6 +82,7 @@ namespace NSL.DataConversion.Core.Common
 
     #region IData
 
+    //todo: change enumeration like in Dictionary
     public interface IData : IEnumerable<ITable>
     {
         ITable this[int index] { get; }
