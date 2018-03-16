@@ -37,8 +37,11 @@ namespace NSL.DataConversion.Core.Xlsx
             var workbookPart = value.WorkbookPart;
             //todo: size optimization?
             var data = new Data();
-            foreach (var worksheetPart in workbookPart.WorksheetParts)
+
+            foreach (var sheet in workbookPart.Workbook.Sheets.Cast<Sheet>())
             {
+                var worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id);
+
                 var table = new ModifiableTable();
                 var sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
 
@@ -106,14 +109,7 @@ namespace NSL.DataConversion.Core.Xlsx
                 //todo: sheetname
                 //var name = worksheetPart.Worksheet.
 
-                var partRelationshipId = workbookPart.GetIdOfPart(worksheetPart);
-                var correspondingSheet = workbookPart.Workbook
-                    .Sheets
-                    .Cast<Sheet>()
-                    .FirstOrDefault(s => s.Id.HasValue
-                                      && s.Id.Value == partRelationshipId);
-
-                data.Add(correspondingSheet.Name, table);
+                data.Add(sheet.Name, table);
             }
 
             return data;
