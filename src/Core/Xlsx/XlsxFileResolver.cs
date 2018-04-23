@@ -19,12 +19,8 @@ namespace NSL.DataConversion.Core.Xlsx
     {
         public IData Read(string path)
         {
-            using (var memoryStream = new MemoryStream())
+            using (var memoryStream = CopyFileToMemory(path))
             {
-                using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    fileStream.CopyTo(memoryStream);
-                }
                 using (var document = SpreadsheetDocument.Open(memoryStream, false))
                 {
                     return Resolve(document);
@@ -41,9 +37,10 @@ namespace NSL.DataConversion.Core.Xlsx
             foreach (var sheet in workbookPart.Workbook.Sheets.Cast<Sheet>())
             {
                 var worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id);
+                var sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
+                var style = workbookPart.WorkbookStylesPart;
 
                 var table = new ModifiableTable();
-                var sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
 
                 foreach (var r in sheetData.Elements<Row>())
                 {
@@ -100,7 +97,7 @@ namespace NSL.DataConversion.Core.Xlsx
                         else
                         {
                             //todo: or not?
-                            cellValue = null;
+                            cellValue = c.CellValue?.Text;
                         }
                         row.Add(new XlsxCell(cellValue, cellType));
                     }
@@ -162,6 +159,19 @@ namespace NSL.DataConversion.Core.Xlsx
             {
                 return false;
             }
+        }
+
+        //todo: move to helper??
+        public static Stream CopyFileToMemory(string path)
+        {
+            var memoryStream = new MemoryStream();
+
+            using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                fileStream.CopyTo(memoryStream);
+            }
+
+            return memoryStream;
         }
     }
 }
