@@ -1,16 +1,14 @@
 ﻿// This file is licensed under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using ClosedXML;
+using ClosedXML.Excel;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
-using OpenXmlCell = DocumentFormat.OpenXml.Spreadsheet.Cell;
 using NSL.DataConversion.Core.Common;
 
 namespace NSL.DataConversion.Core.Xlsx
@@ -21,101 +19,50 @@ namespace NSL.DataConversion.Core.Xlsx
         {
             using (var memoryStream = CopyFileToMemory(path))
             {
-                using (var document = SpreadsheetDocument.Open(memoryStream, false))
+                using (var workbook = new XLWorkbook(memoryStream, XLEventTracking.Disabled))
                 {
-                    return Resolve(document);
+                    return Resolve(workbook);
                 }
             }
         }
 
-        public IData Resolve(SpreadsheetDocument value)
+        public IData Resolve(IXLWorkbook value)
         {
-            var workbookPart = value.WorkbookPart;
             //todo: size optimization?
             var data = new Data();
 
-            foreach (var sheet in workbookPart.Workbook.Sheets.Cast<Sheet>())
+            foreach (var worksheet in value.Worksheets)
             {
-                var worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id);
-                var sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
-                var style = workbookPart.WorkbookStylesPart;
-
-                var table = new ModifiableTable();
-
-                foreach (var r in sheetData.Elements<Row>())
+                var range = worksheet.RangeUsed();
+                if (range == null)
                 {
-                    var row = new List<ICell>();
-                    foreach (var c in r.Elements<OpenXmlCell>())
-                    {
-                        object cellValue;
-                        XlsxCellType cellType = XlsxCellType.General;
-                        if (c.DataType != null)
-                        {
-                            switch ((CellValues)c.DataType)
-                            {
-                                case CellValues.Boolean:
-                                    cellValue = c.CellValue.Text; //todo: to bool
-                                    break;
-
-                                case CellValues.Number:
-                                    cellValue = c.CellValue.Text; //todo: to int
-                                    break;
-
-                                case CellValues.Error:
-                                    cellValue = null; //todo: what should be?
-                                    break;
-
-                                case CellValues.SharedString:
-                                    //todo: error checking
-                                    var stringId = Convert.ToInt32(c.InnerText);
-                                    cellValue = workbookPart
-                                        .SharedStringTablePart
-                                        .SharedStringTable
-                                        .Elements<SharedStringItem>()
-                                        .ElementAt(stringId)
-                                        .InnerText;
-                                    break;
-
-                                case CellValues.String:
-                                    cellValue = c.CellValue.Text;
-                                    break;
-
-                                case CellValues.InlineString:
-                                    cellValue = c.CellValue.Text;
-                                    break;
-
-                                case CellValues.Date:
-                                    cellValue = c.CellValue.Text; //todo: to DateTime
-                                    cellType = XlsxCellType.DateTime;
-                                    break;
-
-                                default:
-                                    cellValue = null;
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            //todo: or not?
-                            cellValue = c.CellValue?.Text;
-                        }
-                        row.Add(new XlsxCell(cellValue, cellType));
-                    }
-                    table.AddRow(row);
+                    data.Add(worksheet.Name, new SimpleTable(new IXlsxCell[0, 0]));
+                    continue;
                 }
-                //todo: sheetname
-                //var name = worksheetPart.Worksheet.
+                var rowsCount = range.RowCount();
+                var columnsCount = range.ColumnCount();
+                var xlsxCells = new IXlsxCell[rowsCount, columnsCount];
 
-                data.Add(sheet.Name, table);
+                for (int i = 0; i < rowsCount; i++)
+                {
+                    for (int j = 0; j < columnsCount; j++)
+                    {
+                        var cell = range.Cell(i + 1, j + 1);
+                        xlsxCells[i, j] = new XlsxCell(cell.Value, cell.Style.NumberFormat.NumberFormatId, cell.Style.NumberFormat.Format);
+                    }
+                }
+
+                data.Add(worksheet.Name, new SimpleTable(xlsxCells));
             }
+
 
             return data;
         }
 
-        public SpreadsheetDocument Resolve(IData value)
+        public IXLWorkbook Resolve(IData value)
         {
             var memoryStream = new MemoryStream();
-            var result = SpreadsheetDocument.Create(memoryStream, SpreadsheetDocumentType.Workbook);
+            //var result = SpreadsheetDocument.Create(memoryStream, SpreadsheetDocumentType.Workbook);
 
             throw new NotImplementedException();
         }
@@ -140,7 +87,7 @@ namespace NSL.DataConversion.Core.Xlsx
                 result = Read(path);
                 return true;
             }
-            catch (Exception)
+            catch
             {
                 result = null;
                 return false;

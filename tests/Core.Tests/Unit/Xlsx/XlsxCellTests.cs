@@ -29,7 +29,8 @@ namespace NSL.DataConversion.Core.Tests.Unit.Xlsx
             var datetime = DateTime.FromOADate(dbl);
 
             var value = type == null ? input : Convert.ChangeType(input, type.Value);
-            var cell = new XlsxCell(value, XlsxCellType.DateTime);
+            // need to review
+            var cell = new XlsxCell(value/*, XlsxCellType.DateTime*/);
 
             // Act
             var result = cell.Value;

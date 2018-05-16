@@ -35,13 +35,28 @@ namespace NSL.DataConversion.Core.Xlsx
     //    new IList<IList<IXlsxCell>> ResolveToList(object[,] value);
     //}
 
-    public interface IXlsxFileResolver : IResolver<SpreadsheetDocument, IData>,
-        IResolver<IData, SpreadsheetDocument>
+    public interface IXlsxFileResolver
     {
         IData Read(string path);
 
         bool TryRead(string path, out IData result);
 
         void Save(string path, IData content);
+    }
+
+    public interface IFormatCollection
+    {
+        int[] DefinedIds { get; }
+        bool TryGetFormat(int id, out string format);
+        string GetFormat(int id);
+        bool IsDefined(int id);
+        bool IsDefined(string format, out int id);
+        bool IsCustom(int id);
+        bool IsDefault(int id);
+
+
+        ICollection<KeyValuePair<int, string>> GetAllFormats();
+        ICollection<KeyValuePair<int, string>> GetCustomFormats();
+        ICollection<KeyValuePair<int, string>> GetDefaultFormats();
     }
 }

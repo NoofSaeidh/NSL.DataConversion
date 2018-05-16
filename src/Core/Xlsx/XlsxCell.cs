@@ -20,17 +20,11 @@ namespace NSL.DataConversion.Core.Xlsx
         {
         }
 
-        public XlsxCell(object value, XlsxCellType cellType, string format = null) : base(value)
+        public XlsxCell(object value, int formatId = 0, string format = null, object customFormats = null) : base(value)
         {
-            CellType = cellType;
+            CellType = formatId != 0 ? XlsxCellType.DateTime : XlsxCellType.General;
             Format = format;
         }
-
-        public static XlsxCell DateTimeCell(object dateTimeValue, string dateTimeFormat = null)
-        {
-            return new XlsxCell(dateTimeValue, XlsxCellType.DateTime, dateTimeFormat);
-        }
-
         public override object Value
         {
             get
