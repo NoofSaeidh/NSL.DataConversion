@@ -28,6 +28,6 @@ namespace System.Collections.Dimensions
 
         bool Remove(IEnumerable<T> items, int dimension);
 
-        void CopyTo(Array array, IIndexXd index);
+        void CopyTo(Array array, int arrayIndex);
     }
 }

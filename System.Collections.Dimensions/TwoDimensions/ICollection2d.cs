@@ -22,7 +22,5 @@ namespace System.Collections.Dimensions.TwoDimensions
         bool RemoveX(IEnumerable<T> items);
 
         bool RemoveY(IEnumerable<T> items);
-
-        void CopyTo(Array array, int x, int y);
     }
 }
