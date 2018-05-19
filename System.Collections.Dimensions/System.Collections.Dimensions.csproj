@@ -43,6 +43,7 @@
     <Compile Include="IIndexXd.cs" />
     <Compile Include="ICollectionXd.cs" />
     <Compile Include="IIntersectionXd.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="TwoDimensions\ICollection2d.cs" />
     <Compile Include="TwoDimensions\IMatrix2d.cs" />
     <Compile Include="IMatrixXd.cs" />

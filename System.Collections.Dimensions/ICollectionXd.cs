@@ -11,14 +11,12 @@ namespace System.Collections.Dimensions
 {
     public interface ICollectionXd<T> : IEnumerable<IIntersectionXd<T>>, IEnumerable<T>, IEnumerable
     {
-        int Dimensions { get; }
-
         int Count { get; }
         IIndexXd Counts { get; }
-
+        int Dimensions { get; }
         bool IsReadOnly { get; }
-
         bool IsSynchronized { get; }
+        object SyncRoot { get; }
 
         void Add(IEnumerable<T> items, int dimension);
 
@@ -26,8 +24,8 @@ namespace System.Collections.Dimensions
 
         bool Contains(T item);
 
-        bool Remove(IEnumerable<T> items, int dimension);
-
         void CopyTo(Array array, int arrayIndex);
+
+        bool Remove(IEnumerable<T> items, int dimension);
     }
 }
