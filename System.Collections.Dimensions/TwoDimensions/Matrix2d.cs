@@ -13,15 +13,6 @@ namespace System.Collections.Dimensions.TwoDimensions
     [Serializable]
     public class Matrix2d<T> : IMatrix2d<T>, IReadOnlyMatrix2d<T>, IReadOnlyMatrixXd<T>
     {
-        private enum SizeAction
-        {
-            Nothing
-            Return,
-            Throw,
-            ExtendItems,
-            ExtendInput
-        }
-
         // from mscorlib Array
         internal const int MaxArrayLength = 0X7FEFFFFF;
 
@@ -30,12 +21,18 @@ namespace System.Collections.Dimensions.TwoDimensions
         private const int _defaultCapacity = 4;
 
         private static readonly T[,] _emptyArray = new T[0, 0];
-        private T[,] _items;
-        private int _sizeTotal;
-        private int _sizeX;
-        private int _sizeY;
+
         private int _capacityX;
+
         private int _capacityY;
+
+        private T[,] _items;
+
+        private int _countTotal;
+
+        private int _countX;
+
+        private int _countY;
 
         [NonSerialized]
         private object _syncRoot;
@@ -61,6 +58,15 @@ namespace System.Collections.Dimensions.TwoDimensions
             throw new NotImplementedException();
         }
 
+        private enum SizeAction
+        {
+            Nothing,
+            Return,
+            Throw,
+            ExtendItems,
+            ExtendInput
+        }
+
         // throw, skip or add default if new collection that added
         // has less values that curretn dimension
         public DimensionChangeBehavior AddingFewerItemsBehavior { get; set; }
@@ -78,11 +84,11 @@ namespace System.Collections.Dimensions.TwoDimensions
             set
             {
                 // todo: methods
-                if (value.X < _sizeX)
+                if (value.X < _countX)
                 {
                     throw new ArgumentOutOfRangeException();
                 }
-                if (value.Y < _sizeY)
+                if (value.Y < _countY)
                 {
                     throw new ArgumentOutOfRangeException();
                 }
@@ -93,9 +99,9 @@ namespace System.Collections.Dimensions.TwoDimensions
                     if (value.X > 0 || value.Y > 0)
                     {
                         T[,] newItems = new T[value.X, value.Y];
-                        if (_sizeTotal > 0)
+                        if (_countTotal > 0)
                         {
-                            Array.Copy(_items, 0, newItems, 0, _sizeTotal);
+                            Array.Copy(_items, 0, newItems, 0, _countTotal);
                         }
                         _items = newItems;
                     }
@@ -110,6 +116,8 @@ namespace System.Collections.Dimensions.TwoDimensions
             }
         }
 
+        public int CapacityTotal => _items.Length;
+
         public int CapacityX
         {
             get
@@ -119,7 +127,7 @@ namespace System.Collections.Dimensions.TwoDimensions
             set
             {
                 // todo: methods
-                if (value < _sizeX)
+                if (value < _countX)
                 {
                     throw new ArgumentOutOfRangeException();
                 }
@@ -128,10 +136,10 @@ namespace System.Collections.Dimensions.TwoDimensions
                 {
                     if (value > 0)
                     {
-                        T[,] newItems = new T[value, _sizeY];
-                        if (_sizeTotal > 0)
+                        T[,] newItems = new T[value, _countY];
+                        if (_countTotal > 0)
                         {
-                            Array.Copy(_items, 0, newItems, 0, _sizeTotal);
+                            Array.Copy(_items, 0, newItems, 0, _countTotal);
                         }
                         _items = newItems;
                     }
@@ -154,7 +162,7 @@ namespace System.Collections.Dimensions.TwoDimensions
             set
             {
                 // todo: methods
-                if (value < _sizeY)
+                if (value < _countY)
                 {
                     throw new ArgumentOutOfRangeException();
                 }
@@ -163,10 +171,10 @@ namespace System.Collections.Dimensions.TwoDimensions
                 {
                     if (value > 0)
                     {
-                        T[,] newItems = new T[_sizeX, value];
-                        if (_sizeTotal > 0)
+                        T[,] newItems = new T[_countX, value];
+                        if (_countTotal > 0)
                         {
-                            Array.Copy(_items, 0, newItems, 0, _sizeTotal);
+                            Array.Copy(_items, 0, newItems, 0, _countTotal);
                         }
                         _items = newItems;
                     }
@@ -180,19 +188,39 @@ namespace System.Collections.Dimensions.TwoDimensions
             }
         }
 
-        public int CapacityTotal => _items.Length;
+        public int Count => _countTotal;
 
-        public int Count => _sizeTotal;
-
-        public Index2d Counts => new Index2d(_sizeX, _sizeY);
+        public Index2d Counts => new Index2d(CountX, CountY);
 
         IIndexXd IReadOnlyCollectionXd<T>.Counts => Counts;
 
         IIndexXd ICollectionXd<T>.Counts => Counts;
 
-        public int CountX => _sizeX;
+        public int CountX
+        {
+            get
+            {
+                return _countX;
+            }
+            private set
+            {
+                _countX = value;
+                _countTotal = _countX * _countY;
+            }
+        }
 
-        public int CountY => _sizeY;
+        public int CountY
+        {
+            get
+            {
+                return _countY;
+            }
+            private set
+            {
+                _countY = value;
+                _countTotal = _countX * _countY;
+            }
+        }
 
         public int Dimensions => 2;
 
@@ -228,8 +256,8 @@ namespace System.Collections.Dimensions.TwoDimensions
                 //todo: method?
                 // Following trick can reduce the range check by one
                 if (x < 0 || y < 0
-                    || (uint)x >= (uint)_sizeX
-                    || (uint)y >= (uint)_sizeY)
+                    || (uint)x >= (uint)_countX
+                    || (uint)y >= (uint)_countY)
                 {
                     throw new ArgumentOutOfRangeException();
                 }
@@ -239,8 +267,8 @@ namespace System.Collections.Dimensions.TwoDimensions
             set
             {
                 if (x < 0 || y < 0
-                    || (uint)x >= (uint)_sizeX
-                    || (uint)y >= (uint)_sizeY)
+                    || (uint)x >= (uint)_countX
+                    || (uint)y >= (uint)_countY)
                 {
                     throw new ArgumentOutOfRangeException();
                 }
@@ -280,101 +308,24 @@ namespace System.Collections.Dimensions.TwoDimensions
             }
         }
 
-        // value for input, size for _sizeX or _sizeY
-        private SizeAction CheckSizes(int value, int size)
-        {
-            if (value < size)
-            {
-                switch (AddingFewerItemsBehavior)
-                {
-                    case DimensionChangeBehavior.Throw:
-                        return SizeAction.Throw;
-
-                    case DimensionChangeBehavior.Ignore:
-                        return SizeAction.Return;
-
-                    case DimensionChangeBehavior.FillDefaults:
-                        return SizeAction.ExtendInput;
-
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
-
-            if (value > size)
-            {
-                switch (AddingFewerItemsBehavior)
-                {
-                    case DimensionChangeBehavior.Throw:
-                        return SizeAction.Throw;
-
-                    case DimensionChangeBehavior.Ignore:
-                        return SizeAction.Return;
-
-                    case DimensionChangeBehavior.FillDefaults:
-                        return SizeAction.ExtendItems;
-
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
-
-            return SizeAction.Nothing;
-        }
-
-        private SizeAction CheckSizeX(int value)
-        {
-            return CheckSizes(value, _sizeX);
-        }
-
-        private SizeAction CheckSizeY(int value)
-        {
-            return CheckSizes(value, _sizeY);
-        }
-
-        private IList<T> EnsureListSizes(IEnumerable<T> items, ref int size)
-        {
-            var list = items is IList<T> l ? l : items.ToArray();
-            var action = CheckSizes(list.Count, size);
-            switch (action)
-            {
-                case SizeAction.Nothing:
-                    return list;
-
-                case SizeAction.Throw:
-                    throw new ArgumentException();
-
-                case SizeAction.ExtendItems:
-                    size = list.Count;
-                    return list;
-
-                case SizeAction.ExtendInput:
-                    return list.Union(Enumerable.Repeat(default(T), size - list.Count)).ToArray();
-
-                case SizeAction.Return:
-                default:
-                    return null;
-            }
-        }
-
         public void AddX(IEnumerable<T> items)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
 
-            var list = EnsureListSizes(items, ref _sizeY);
+            var list = EnsureListSizes(items, _countY, out var newCountY);
             if (list == null) return;
 
-            // in EnsureListSizes _sizeY changed
-            if (_sizeY >= _capacityY)
-                EnsureCapacityY(_sizeY);
+            CountY = newCountY;
+            if (_countY >= _capacityY)
+                EnsureCapacityY(_countY);
 
-            if (_sizeX == _capacityX)
-                EnsureCapacityX(_sizeX + 1);
+            if (_countX == _capacityX)
+                EnsureCapacityX(_countX + 1);
 
             for (int i = 0; i < list.Count; i++)
             {
-                _items[_sizeX, i] = list[i];
+                _items[_countX, i] = list[i];
             }
 
             _version++;
@@ -385,18 +336,19 @@ namespace System.Collections.Dimensions.TwoDimensions
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
 
-            var list = EnsureListSizes(items, ref _sizeX);
+            var list = EnsureListSizes(items, _countX, out var newCountX);
             if (list == null) return;
 
-            if (_sizeX >= _capacityX)
-                EnsureCapacityY(_sizeX);
+            CountX = newCountX;
+            if (_countX >= _capacityX)
+                EnsureCapacityY(_countX);
 
-            if (_sizeY == _capacityY)
-                EnsureCapacityX(_sizeY + 1);
+            if (_countY == _capacityY)
+                EnsureCapacityX(_countY + 1);
 
             for (int i = 0; i < list.Count; i++)
             {
-                _items[i, _sizeY] = list[i];
+                _items[i, _countY] = list[i];
             }
 
             _version++;
@@ -404,10 +356,10 @@ namespace System.Collections.Dimensions.TwoDimensions
 
         public void Clear()
         {
-            if (_sizeTotal > 0)
+            if (_countTotal > 0)
             {
-                Array.Clear(_items, 0, _sizeTotal);
-                _sizeX = _sizeY = _sizeTotal = 0;
+                Array.Clear(_items, 0, _countTotal);
+                _countX = _countY = _countTotal = 0;
             }
             _version++;
         }
@@ -416,8 +368,8 @@ namespace System.Collections.Dimensions.TwoDimensions
         {
             if ((object)item == null)
             {
-                for (int i = 0; i < _sizeX; i++)
-                    for (int j = 0; j < _sizeY; j++)
+                for (int i = 0; i < _countX; i++)
+                    for (int j = 0; j < _countY; j++)
                         if ((object)_items[i, j] == null)
                             return true;
                 return false;
@@ -425,8 +377,8 @@ namespace System.Collections.Dimensions.TwoDimensions
             else
             {
                 EqualityComparer<T> c = EqualityComparer<T>.Default;
-                for (int i = 0; i < _sizeX; i++)
-                    for (int j = 0; j < _sizeY; j++)
+                for (int i = 0; i < _countX; i++)
+                    for (int j = 0; j < _countY; j++)
                         if (c.Equals(_items[i, j], item)) return true;
 
                 return false;
@@ -435,7 +387,7 @@ namespace System.Collections.Dimensions.TwoDimensions
 
         public void CopyTo(Array array, int arrayIndex)
         {
-            Array.Copy(_items, 0, array, arrayIndex, _sizeTotal);
+            Array.Copy(_items, 0, array, arrayIndex, _countTotal);
         }
 
         public IEnumerator<Intersection2d<T>> GetEnumerator()
@@ -454,60 +406,6 @@ namespace System.Collections.Dimensions.TwoDimensions
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        private void EnsureCapacityX(int min)
-        {
-            if (_capacityX < min)
-            {
-                int newCapacity = _capacityX == 0 ? _defaultCapacity : _capacityX * 2;
-
-                if ((uint)newCapacity * (uint)_capacityX > MaxArrayLength)
-                    newCapacity = MaxArrayLength;
-
-                if (newCapacity < min)
-                    newCapacity = min;
-
-                CapacityX = newCapacity;
-            }
-        }
-
-        private void EnsureCapacityY(int min)
-        {
-            if (_capacityY < min)
-            {
-                int newCapacity = _capacityY == 0 ? _defaultCapacity : _capacityY * 2;
-
-                if ((uint)newCapacity * (uint)_capacityY > MaxArrayLength)
-                    newCapacity = MaxArrayLength;
-
-                if (newCapacity < min)
-                    newCapacity = min;
-
-                CapacityY = newCapacity;
-            }
-        }
-
-        private void EnsureCapacities(Index2d min)
-        {
-            if (_capacityX < min.X || _capacityY < min.Y)
-            {
-                int newCapacityX = _capacityX == 0 ? _defaultCapacity : _capacityX * 2;
-                int newCapacityY = _capacityY == 0 ? _defaultCapacity : _capacityY * 2;
-
-                if ((uint)newCapacityX * (uint)newCapacityY > MaxArrayLength)
-                {
-                    // todo: don't know how to ensure
-                    throw new NotImplementedException();
-                }
-
-                if (newCapacityX < min.X)
-                    newCapacityX = min.X;
-                if (newCapacityY < min.Y)
-                    newCapacityY = min.Y;
-
-                Capacities = new Index2d(newCapacityX, newCapacityY);
-            }
-        }
 
         public Index2d IndexOf(T intem)
         {
@@ -582,6 +480,140 @@ namespace System.Collections.Dimensions.TwoDimensions
         public bool RemoveY(IEnumerable<T> items)
         {
             throw new NotImplementedException();
+        }
+
+        // value for input, size for _sizeX or _sizeY
+        private SizeAction CheckSizes(int value, int size)
+        {
+            if (value < size)
+            {
+                switch (AddingFewerItemsBehavior)
+                {
+                    case DimensionChangeBehavior.Throw:
+                        return SizeAction.Throw;
+
+                    case DimensionChangeBehavior.Ignore:
+                        return SizeAction.Return;
+
+                    case DimensionChangeBehavior.FillDefaults:
+                        return SizeAction.ExtendInput;
+
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+
+            if (value > size)
+            {
+                switch (AddingFewerItemsBehavior)
+                {
+                    case DimensionChangeBehavior.Throw:
+                        return SizeAction.Throw;
+
+                    case DimensionChangeBehavior.Ignore:
+                        return SizeAction.Return;
+
+                    case DimensionChangeBehavior.FillDefaults:
+                        return SizeAction.ExtendItems;
+
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+
+            return SizeAction.Nothing;
+        }
+
+        private SizeAction CheckSizeX(int value)
+        {
+            return CheckSizes(value, _countX);
+        }
+
+        private SizeAction CheckSizeY(int value)
+        {
+            return CheckSizes(value, _countY);
+        }
+
+        private void EnsureCapacities(Index2d min)
+        {
+            if (_capacityX < min.X || _capacityY < min.Y)
+            {
+                int newCapacityX = _capacityX == 0 ? _defaultCapacity : _capacityX * 2;
+                int newCapacityY = _capacityY == 0 ? _defaultCapacity : _capacityY * 2;
+
+                if ((uint)newCapacityX * (uint)newCapacityY > MaxArrayLength)
+                {
+                    // todo: don't know how to ensure
+                    throw new NotImplementedException();
+                }
+
+                if (newCapacityX < min.X)
+                    newCapacityX = min.X;
+                if (newCapacityY < min.Y)
+                    newCapacityY = min.Y;
+
+                Capacities = new Index2d(newCapacityX, newCapacityY);
+            }
+        }
+
+        private void EnsureCapacityX(int min)
+        {
+            if (_capacityX < min)
+            {
+                int newCapacity = _capacityX == 0 ? _defaultCapacity : _capacityX * 2;
+
+                if ((uint)newCapacity * (uint)_capacityX > MaxArrayLength)
+                    newCapacity = MaxArrayLength;
+
+                if (newCapacity < min)
+                    newCapacity = min;
+
+                CapacityX = newCapacity;
+            }
+        }
+
+        private void EnsureCapacityY(int min)
+        {
+            if (_capacityY < min)
+            {
+                int newCapacity = _capacityY == 0 ? _defaultCapacity : _capacityY * 2;
+
+                if ((uint)newCapacity * (uint)_capacityY > MaxArrayLength)
+                    newCapacity = MaxArrayLength;
+
+                if (newCapacity < min)
+                    newCapacity = min;
+
+                CapacityY = newCapacity;
+            }
+        }
+
+        private IList<T> EnsureListSizes(IEnumerable<T> items, int size, out int newSize)
+        {
+            var list = items is IList<T> l ? l : items.ToArray();
+            var action = CheckSizes(list.Count, size);
+            switch (action)
+            {
+                case SizeAction.Nothing:
+                    newSize = size;
+                    return list;
+
+                case SizeAction.Throw:
+                    throw new ArgumentException();
+
+                case SizeAction.ExtendItems:
+                    newSize = list.Count;
+                    return list;
+
+                case SizeAction.ExtendInput:
+                    newSize = size;
+                    return list.Union(Enumerable.Repeat(default(T), size - list.Count)).ToArray();
+
+                case SizeAction.Return:
+                default:
+                    newSize = size;
+                    return null;
+            }
         }
     }
 }
